@@ -1,6 +1,6 @@
 # X1、X1turboにSD-CARDからのアプリケーション起動(実装済)、ロード、セーブ機能(予定)
 
-![X1_SD](https://github.com/yanataka60/MZ-2000_SD/blob/main/JPEG/TITLE.jpg)
+![X1_SD](https://github.com/yanataka60/X1_SD/blob/main/JPEG/TITLE.jpg)
 
 　X1、X1turboでSD-CARDからのアプリケーション起動(実装済)、BASICなどのアプリケーションからSD-CARDへのロード、セーブ(予定)を実現するものです。
 
