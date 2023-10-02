@@ -15,8 +15,8 @@
 　なお、Arduino、ROMへ書き込むための機器が別途必要となります。
 
 ## 回路図
-[X1_SD](https://github.com/yanataka60/MZ-2000_SD/blob/main/KiCad/MZ-2000_SD/MZ2000_SD.pdf)
-![X1_SD](https://github.com/yanataka60/MZ-2000_SD/blob/main/JPEG/MZ2000_SD_schematic.jpg)
+[X1_SD](https://github.com/yanataka60/X1_SD/blob/main/Kicad/X1_SD.pdf)
+![X1_SD](https://github.com/yanataka60/X1_SD/blob/main/Kicad/X1_SD.jpg)
 
 ## 部品
 |番号|品名|数量|備考|
