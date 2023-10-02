@@ -6,7 +6,7 @@ encoding utf-8
 Sheet 1 1
 Title "X1_SD"
 Date ""
-Rev "Rev1.2"
+Rev "Rev1.3"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -2438,8 +2438,6 @@ Wire Wire Line
 	13600 10750 13600 11200
 Connection ~ 13600 10750
 Connection ~ 13600 11200
-Wire Wire Line
-	2300 4900 2550 4900
 Text Label 1600 4900 0    50   ~ 0
 D2
 Text Label 1600 5000 0    50   ~ 0
@@ -2514,46 +2512,8 @@ Text Label 2300 5000 0    50   ~ 0
 D4
 Text Label 2300 4900 0    50   ~ 0
 D3
-Wire Wire Line
-	2300 5000 2550 5000
-Wire Wire Line
-	2300 5100 2550 5100
-Wire Wire Line
-	2300 5200 2550 5200
-Wire Wire Line
-	2300 5300 2550 5300
-Wire Wire Line
-	2300 5400 2550 5400
-Wire Wire Line
-	2300 5500 2550 5500
-Wire Wire Line
-	2300 5600 2550 5600
-Wire Wire Line
-	2300 5700 2550 5700
-Wire Wire Line
-	2300 5800 2550 5800
-Wire Wire Line
-	2300 5900 2550 5900
-Wire Wire Line
-	2300 6100 2550 6100
-Wire Wire Line
-	2300 6200 2550 6200
-Wire Wire Line
-	2300 6300 2550 6300
-Wire Wire Line
-	2300 6400 2550 6400
-Wire Wire Line
-	2300 6500 2550 6500
-Wire Wire Line
-	2300 6600 2550 6600
-Wire Wire Line
-	2300 6700 2550 6700
-Wire Wire Line
-	2300 6800 2550 6800
 Text Label 2300 6500 0    50   ~ 0
 ~EXIO
-Wire Wire Line
-	2300 6000 2550 6000
 Text Label 1550 4800 0    50   ~ 0
 +5V
 Text Label 1650 5200 0    50   ~ 0
@@ -2566,20 +2526,16 @@ Text Label 2300 6000 0    50   ~ 0
 GND
 Text Label 2300 6900 0    50   ~ 0
 GND
-Wire Wire Line
-	2300 4800 2550 4800
-Wire Wire Line
-	2550 6900 2300 6900
 $Comp
 L Connector_Generic:Conn_02x22_Odd_Even J4
 U 1 1 65B5221C
-P 2100 5800
-F 0 "J4" H 2150 7017 50  0000 C CNN
-F 1 "for CZ-800" H 2150 6926 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x22_P2.54mm_Vertical" H 2100 5800 50  0001 C CNN
-F 3 "~" H 2100 5800 50  0001 C CNN
-	1    2100 5800
-	-1   0    0    -1  
+P 2000 5800
+F 0 "J4" H 2050 7017 50  0000 C CNN
+F 1 "for CZ-800" H 2050 6926 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x22_P2.54mm_Vertical" H 2000 5800 50  0001 C CNN
+F 3 "~" H 2000 5800 50  0001 C CNN
+	1    2000 5800
+	1    0    0    -1  
 $EndComp
 Wire Wire Line
 	1550 5100 1800 5100
@@ -2849,4 +2805,48 @@ Text Label 4750 6850 0    50   ~ 0
 +5V
 Wire Wire Line
 	4750 6850 5000 6850
+Wire Wire Line
+	2300 4900 2550 4900
+Wire Wire Line
+	2300 5000 2550 5000
+Wire Wire Line
+	2300 5100 2550 5100
+Wire Wire Line
+	2300 5200 2550 5200
+Wire Wire Line
+	2300 5300 2550 5300
+Wire Wire Line
+	2300 5400 2550 5400
+Wire Wire Line
+	2300 5500 2550 5500
+Wire Wire Line
+	2300 5600 2550 5600
+Wire Wire Line
+	2300 5700 2550 5700
+Wire Wire Line
+	2300 5800 2550 5800
+Wire Wire Line
+	2300 5900 2550 5900
+Wire Wire Line
+	2300 6100 2550 6100
+Wire Wire Line
+	2300 6200 2550 6200
+Wire Wire Line
+	2300 6300 2550 6300
+Wire Wire Line
+	2300 6400 2550 6400
+Wire Wire Line
+	2300 6500 2550 6500
+Wire Wire Line
+	2300 6600 2550 6600
+Wire Wire Line
+	2300 6700 2550 6700
+Wire Wire Line
+	2300 6800 2550 6800
+Wire Wire Line
+	2300 6000 2550 6000
+Wire Wire Line
+	2300 4800 2550 4800
+Wire Wire Line
+	2300 6900 2550 6900
 $EndSCHEMATC
