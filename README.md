@@ -69,13 +69,13 @@ MicroSD Card Adapterについているピンヘッダを除去してハンダ付
 
 
 ## ROMへの書込み
-　まず、HuBASIC CZ-8CB01からCIOS(0000h～149Fh)を抜き出し、バイナリファイルとして保存します。
+　まず、HuBASIC CZ-8CB01からIOCS(0000h～149Fh)を抜き出し、バイナリファイルとして保存します。
 
 　CZ-8FB01、CZ-8FB01も大丈夫だとは思いますが、検証していません。なお、X1turbo用BASICは使えません。
 
 　DumpList Editorを使ってWav又はtapファイルを読み込み、「マシン語入力に送る」を実行します。
 
-　14A0h以降を削除します。(0000h～149Fhのマシン語にします)
+　マシン語の14A0h以降を削除します。(0000h～149Fhのマシン語にします)
 
 ![IOCS_1](https://github.com/yanataka60/X1_SD/blob/main/JPEG/IOCS(1).jpg)
 
@@ -85,7 +85,7 @@ MicroSD Card Adapterについているピンヘッダを除去してハンダ付
 
 　保存した「IOCS.bin」の後ろにバイナリエディタ等を使ってBOOTフォルダ内の「boot.bin」を付け加えます。0000h～17E5hのファイルとなるはずです。
 
-　次にファイルの最初に以下に示す32Byteのヘッダを付加します。0000h～1805hのファイルとなります。
+　次にファイルの先頭に以下に示す32Byteのヘッダを付加します。0000h～1805hのファイルとなります。
 
 　[0000] 01 58 31 5F 53 44 20 42 4F 4F 54 20 20 20 20 20
 
@@ -114,7 +114,7 @@ MicroSD Card Adapterについているピンヘッダを除去してハンダ付
 ![CZ-804 CONNECT](https://github.com/yanataka60/X1_SD/blob/main/JPEG/CZ-804%20CONNECT.JPG)
 
 ### 拡張スロットを装着していないCZ-800への接続
-　カバーを開けると拡張スロットを装着するためのコネクタがあるので補助基板を挿し込み、X1_SD基板とフラットケーブルで接続します。
+　X1本体のカバーを開けると拡張スロットを装着するためのコネクタがあるので以下の補助基板を挿し込むことでX1_SD基板とフラットケーブルで接続できるようになります。
 
 ![CZ-800_EX_1](https://github.com/yanataka60/X1_SD/blob/main/JPEG/CZ-800%20EXT-BOARD(1).JPG)
 ![CZ-800_EX_2](https://github.com/yanataka60/X1_SD/blob/main/JPEG/CZ-800%20EXT-BOARD(2).JPG)
@@ -154,7 +154,7 @@ J2の2x22Pinコネクタは基板裏側にハンダ付けします。
 
 ![CZ-801_CONNECT_2](https://github.com/yanataka60/X1_SD/blob/main/JPEG/CZ-801_CONNECT(2).JPG)
 
-　X1_SD基板側は、「for CZ-801C」と表記のある2x25Pinコネクタにフラットケーブルを接続します。
+　X1_SD基板側は、「for CZ-801C」と表記のある2x25Pinコネクタにフラットケーブルを接続します。本体から取り出した+5VはコネクタJ6に挿し込みます。J6は2Pinとも+5Vですのでどちらに挿し込んでも構いません。
 
 ![CZ-801_CONNECT_3](https://github.com/yanataka60/X1_SD/blob/main/JPEG/CZ-801_CONNECT(3).JPG)
 
@@ -175,7 +175,51 @@ J2の2x22Pinコネクタは基板裏側にハンダ付けします。
 　ファイル名は「.X1T」を除いて32文字まで、ただし半角カタカナ、及び一部の記号はArduinoが認識しないので使えません。パソコンでファイル名を付けるときはアルファベット、数字および空白でファイル名をつけてください。
 
 ## X1Tファイルの作成
-　
+　X1エミュレータ用CMTファイルはTAP形式が一般的ですが、X1_SDではマシン語にヘッダ(FCB)を付加したバイナリファイルを扱い拡張子をX1Tとしています。
+
+　ヘッダ(FCB)の構造
+
+|アドレス|内容|説明|
+| ------------ | ------------ | ------------ |
+|00|モード|01:マシン語,02:BASIC,03:ASC|
+|01～0D|ファイル名|13文字分|
+|0E～10|拡張子|3文字|
+|11|パスワード|無指定時は20h|
+|12～13|データ長||
+|14～15|データ先頭アドレス||
+|16～17|実行アドレス||
+|18～1C|ファイル作成年月日|無指定時は20h|
+|1D～1F|システム格納アドレス|CMT,X1_SDの場合は00h,00h,00h|
+
+### X1T作成例(サンダーフォースをX1Tファイル化)
+　1) DumpListEditorを起動し、対象マシンとして「X1」を選択
+
+　2)サンダーフォースのWav又はTapファイルをDumpListEditorにドロップする。
+
+![X1T_1](https://github.com/yanataka60/X1_SD/blob/main/JPEG/X1T(1).jpg)
+
+　3)「マシン語入力に送る」をクリックするとマシン語入力画面に切り替わる。
+
+![X1T_2](https://github.com/yanataka60/X1_SD/blob/main/JPEG/X1T(2).jpg)
+
+　4)ここで表示される以下の３つの情報をメモします。
+
+// PROG AREA = 0000-FEFF
+
+// PROG SIZE = FF00 (65280BYTE)
+
+// EXEC ADRS = 0000
+
+　5)「ファイル書出し」の「BIN(mot)ファイル書き出し(ヘッダ無し)(for他汎用)」を選択して適当な名前(例 THUNDER FORCE.bin)で保存します。
+
+![X1T_3](https://github.com/yanataka60/X1_SD/blob/main/JPEG/X1T(3).jpg)
+
+　6)保存したファイル(例 THUNDER FORCE.bin)をバイナリエディタ等で開き、先程のFCBの構造に基づいて32Byteのヘッダを付加し、拡張子をX1Tとし適当な名前(例 THUNDER FORCE.X1T)を付けて保存します。
+
+![X1T_4](https://github.com/yanataka60/X1_SD/blob/main/JPEG/X1T(3).jpg)
+
+　SDカードにコピーします。
+
 
 ## 操作方法
 　ROM起動させた場合にMONITORコマンド入力待ちから以下のコマンドが拡張されます。
