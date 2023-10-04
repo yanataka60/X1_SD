@@ -73,20 +73,29 @@ MicroSD Card Adapterについているピンヘッダを除去してハンダ付
 
 　CZ-8FB01、CZ-8FB01も大丈夫だとは思いますが、検証していません。なお、X1turbo用BASICは使えません。
 
-　Dump　List Editorを使ってCMT又はtapファイルを読み込み、読み込まれたバイナリファイルを「マシン語入力に送る」を実行してから「ファイル書出し」の「BIN(mot)ファイル書き出し(ヘッダ無し)(for他汎用)」でバイナリファイルとして保存します。
+　DumpList Editorを使ってWav又はtapファイルを読み込み、「マシン語入力に送る」を実行します。
 
-![CZ-8CB01](https://github.com/yanataka60/X1_SD/blob/main/JPEG/CZ-8CB01.jpg)
+　14A0h以降を削除します。(0000h～149Fhのマシン語にします)
 
-　次にBOOTフォルダ内のboot.binを保存したCIOSの後ろ(14A0h～)に付け加えて保存します。出来上がるバイナリファイルは0000h～17E5hとなるはずです。
+![IOCS_1](https://github.com/yanataka60/X1_SD/blob/main/JPEG/IOCS(1).jpg)
 
-　32Byteのヘッダを付加します。出来上がるバイナリファイルは0000h～1805hとなります。
+　「ファイル書出し」の「BIN(mot)ファイル書き出し(ヘッダ無し)(for他汎用)」を選択して「IOCS.bin」という名前で保存します。
+
+![IOCS_2](https://github.com/yanataka60/X1_SD/blob/main/JPEG/IOCS(2).jpg)
+
+　保存した「IOCS.bin」の後ろにバイナリエディタ等を使ってBOOTフォルダ内の「boot.bin」を付け加えます。0000h～17E5hのファイルとなるはずです。
+
+　次にファイルの最初に以下に示す32Byteのヘッダを付加します。0000h～1805hのファイルとなります。
 
 　[0000] 01 58 31 5F 53 44 20 42 4F 4F 54 20 20 20 20 20
 
 　[0010] 20 20 E6 17 00 00 00 00 20 20 20 20 20 20 00 00
 
+![IOCS_3](https://github.com/yanataka60/X1_SD/blob/main/JPEG/IOCS(3).jpg)
 
-　出来上がったバイナリファイルをROMライター(TL866II Plus等)を使って27512に書き込んでください。
+　出来上がったら「X1_SD_BOOT.X1T」という名前で保存します。
+
+　「X1_SD_BOOT.X1T」をROMライター(TL866II Plus等)を使って27512に書き込んでください。
 
 
 ## Arduinoプログラム
