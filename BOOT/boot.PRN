@@ -131,8 +131,8 @@
                       	
   14A0                				ORG		14A0H
   14A0  C3A914        				JP		START
-  14A3  C34915        	F_COM:		JP		F_COMMAND
-  14A6  C34417        	L_COM:		JP		L_COMMAND
+  14A3  C35515        	F_COM:		JP		F_COMMAND
+  14A6  C34617        	L_COM:		JP		L_COMMAND
                       	
   14A9                	START:
   14A9  CDD614        				CALL	INIT
@@ -153,320 +153,318 @@
   14E2  ED79          				OUT		(C),A
   14E4  017E00        				LD		BC,007EH
   14E7  ED79          				OUT		(C),A   ;PORTC <- 0
-  14E9  C9            				RET
+                      	
+                      	;**** Fコマンド、Lコマンドジャンプ先設定
+  14E9  21A314        				LD		HL,14A3H
+  14EC  225010        				LD		(1050H),HL
+  14EF  21A614        				LD		HL,14A6H
+  14F2  225910        				LD		(1059H),HL
+  14F5  C9            				RET
                       	
                       	;**** 1BYTE受信 ****
                       	;受信DATAをAレジスタにセットしてリターン
-  14EA                	RCVBYTE:
-  14EA  C5            				PUSH	BC
-  14EB  CD0815        				CALL	F1CHK      ;PORTC BIT7が1になるまでLOOP
-  14EE  017D00        				LD		BC,007DH
-  14F1  ED78          				IN		A,(C)   ;PORTB -> A
-  14F3  F5            				PUSH 	AF
-  14F4  3E05          				LD		A,05H
-  14F6  017F00        				LD		BC,007FH
-  14F9  ED79          				OUT		(C),A    ;PORTC BIT2 <- 1
-  14FB  CD1215        				CALL	F2CHK      ;PORTC BIT7が0になるまでLOOP
-  14FE  3E04          				LD		A,04H
-  1500  017F00        				LD		BC,007FH
-  1503  ED79          				OUT		(C),A    ;PORTC BIT2 <- 0
-  1505  F1            				POP 	AF
-  1506  C1            				POP		BC
-  1507  C9            				RET
+  14F6                	RCVBYTE:
+  14F6  C5            				PUSH	BC
+  14F7  CD1415        				CALL	F1CHK      ;PORTC BIT7が1になるまでLOOP
+  14FA  017D00        				LD		BC,007DH
+  14FD  ED78          				IN		A,(C)   ;PORTB -> A
+  14FF  F5            				PUSH 	AF
+  1500  3E05          				LD		A,05H
+  1502  017F00        				LD		BC,007FH
+  1505  ED79          				OUT		(C),A    ;PORTC BIT2 <- 1
+  1507  CD1E15        				CALL	F2CHK      ;PORTC BIT7が0になるまでLOOP
+  150A  3E04          				LD		A,04H
+  150C  017F00        				LD		BC,007FH
+  150F  ED79          				OUT		(C),A    ;PORTC BIT2 <- 0
+  1511  F1            				POP 	AF
+  1512  C1            				POP		BC
+  1513  C9            				RET
                       	
                       	;**** BUSYをCHECK(1) ****
                       	; 82H BIT7が1になるまでLOP
-  1508  017E00        	F1CHK:		LD		BC,007EH
-  150B  ED78          				IN		A,(C)
-  150D  E680          				AND		80H        ;PORTC BIT7 = 1?
-  150F  28F7          				JR		Z,F1CHK
-  1511  C9            				RET
+  1514  017E00        	F1CHK:		LD		BC,007EH
+  1517  ED78          				IN		A,(C)
+  1519  E680          				AND		80H        ;PORTC BIT7 = 1?
+  151B  28F7          				JR		Z,F1CHK
+  151D  C9            				RET
                       	
                       	;**** BUSYをCHECK(0) ****
                       	; 82H BIT7が0になるまでLOOP
-  1512  017E00        	F2CHK:		LD		BC,007EH
-  1515  ED78          				IN		A,(C)
-  1517  E680          				AND		80H        ;PORTC BIT7 = 0?
-  1519  20F7          				JR		NZ,F2CHK
-  151B  C9            				RET
+  151E  017E00        	F2CHK:		LD		BC,007EH
+  1521  ED78          				IN		A,(C)
+  1523  E680          				AND		80H        ;PORTC BIT7 = 0?
+  1525  20F7          				JR		NZ,F2CHK
+  1527  C9            				RET
                       	
                       	;**** 1BYTE送信 ****
                       	;Aレジスタの内容をPORTA下位4BITに4BITずつ送信
-  151C                	SNDBYTE:
-  151C  C5            				PUSH	BC
-  151D  F5            				PUSH	AF
-  151E  1F            				RRA
-  151F  1F            				RRA
-  1520  1F            				RRA
-  1521  1F            				RRA
-  1522  E60F          				AND		0FH
-  1524  CD2F15        				CALL	SND4BIT
-  1527  F1            				POP		AF
-  1528  E60F          				AND		0FH
-  152A  CD2F15        				CALL	SND4BIT
-  152D  C1            				POP		BC
-  152E  C9            				RET
+  1528                	SNDBYTE:
+  1528  C5            				PUSH	BC
+  1529  F5            				PUSH	AF
+  152A  1F            				RRA
+  152B  1F            				RRA
+  152C  1F            				RRA
+  152D  1F            				RRA
+  152E  E60F          				AND		0FH
+  1530  CD3B15        				CALL	SND4BIT
+  1533  F1            				POP		AF
+  1534  E60F          				AND		0FH
+  1536  CD3B15        				CALL	SND4BIT
+  1539  C1            				POP		BC
+  153A  C9            				RET
                       	
                       	;**** 4BIT送信 ****
                       	;Aレジスタ下位4ビットを送信する
-  152F                	SND4BIT:
-  152F  017C00        				LD		BC,007CH
-  1532  ED79          				OUT		(C),A
-  1534  3E05          				LD		A,05H
-  1536  017F00        				LD		BC,007FH
-  1539  ED79          				OUT		(C),A    ;PORTC BIT2 <- 1
-  153B  CD0815        				CALL	F1CHK      ;PORTC BIT7が1になるまでLOOP
-  153E  3E04          				LD		A,04H
-  1540  017F00        				LD		BC,007FH
-  1543  ED79          				OUT		(C),A    ;PORTC BIT2 <- 0
-  1545  CD1215        				CALL	F2CHK
-  1548  C9            				RET
+  153B                	SND4BIT:
+  153B  017C00        				LD		BC,007CH
+  153E  ED79          				OUT		(C),A
+  1540  3E05          				LD		A,05H
+  1542  017F00        				LD		BC,007FH
+  1545  ED79          				OUT		(C),A    ;PORTC BIT2 <- 1
+  1547  CD1415        				CALL	F1CHK      ;PORTC BIT7が1になるまでLOOP
+  154A  3E04          				LD		A,04H
+  154C  017F00        				LD		BC,007FH
+  154F  ED79          				OUT		(C),A    ;PORTC BIT2 <- 0
+  1551  CD1E15        				CALL	F2CHK
+  1554  C9            				RET
                       			
-  1549                	F_COMMAND:
-  1549  1A            				LD		A,(DE)
-  154A  CD5114        				CALL	TUPPER
-  154D  FE44          				CP		'D'
-  154F  2801          				JR		Z,FD_COMMAND
-  1551  C9            				RET
+  1555                	F_COMMAND:
+  1555  216315        				LD		HL,DEFDIR         ;行頭に'*L 'を付けることでカーソルを移動させリターンで実行できるように
+  1558  010300        				LD		BC,DEND-DEFDIR
+  155B  CD6615        				CALL	DIRLIST
+  155E  A7            				AND		A                 ;00以外ならERROR
+  155F  C21517        				JP		NZ,SVERR
+  1562  C9            				RET
                       	
-  1552                	FD_COMMAND:
-  1552  13            				INC		DE
-  1553  216115        				LD		HL,DEFDIR         ;行頭に'*L 'を付けることでカーソルを移動させリターンで実行できるように
-  1556  010300        				LD		BC,DEND-DEFDIR
-  1559  CD6415        				CALL	DIRLIST
-  155C  A7            				AND		A                 ;00以外ならERROR
-  155D  C21317        				JP		NZ,SVERR
-  1560  C9            				RET
-                      	
-  1561                	DEFDIR:
-  1561  2A4C20        			DB		'*L '
-  1564                	DEND:
+  1563                	DEFDIR:
+  1563  2A4C20        			DB		'*L '
+  1566                	DEND:
                       	
                       	;**** DIRLIST本体 (HL=行頭に付加する文字列の先頭アドレス BC=行頭に付加する文字列の長さ) ****
                       	;****              戻り値 A=エラーコード ****
-  1564                	DIRLIST:
-  1564  3E83          				LD		A,83H      ;DIRLISTコマンド83Hを送信
-  1566  CDD016        				CALL	STCD       ;コマンドコード送信
-  1569  A7            				AND		A          ;00以外ならERROR
-  156A  C2F315        				JP		NZ,DLRET
+  1566                	DIRLIST:
+  1566  3E83          				LD		A,83H      ;DIRLISTコマンド83Hを送信
+  1568  CDD216        				CALL	STCD       ;コマンドコード送信
+  156B  A7            				AND		A          ;00以外ならERROR
+  156C  C2F515        				JP		NZ,DLRET
                       			
-  156D  C5            				PUSH	BC
-  156E  0621          				LD		B,21H
-  1570  1A            	STLT1:		LD		A,(DE)
-  1571  CD5114        				CALL	TUPPER
-  1574  CD1C15        	STLT2:		CALL	SNDBYTE           ;比較文字列を送信
-  1577  13            				INC		DE
-  1578  10F6          				DJNZ	STLT1
-  157A  C1            				POP		BC
-  157B                	DL1:
-  157B  E5            				PUSH	HL
-  157C  C5            				PUSH	BC
-  157D  11F415        				LD		DE,BUF
-  1580  EDB0          				LDIR
-  1582  EB            				EX		DE,HL
-  1583  CDEA14        	DL2:		CALL	RCVBYTE           ;'00H'を受信するまでを一行とする
-  1586  FE00          				CP		00H
-  1588  280C          				JR		Z,DL3
-  158A  FEFF          				CP		0FFH              ;'0FFH'を受信したら終了
-  158C  2816          				JR		Z,DL4
-  158E  FEFE          				CP		0FEH              ;'0FEH'を受信したら一時停止して一文字入力待ち
-  1590  2819          				JR		Z,DL5
-  1592  77            				LD		(HL),A
-  1593  23            				INC		HL
-  1594  18ED          				JR		DL2
-  1596  77            	DL3:		LD		(HL),A
-  1597  11F415        				LD		DE,BUF             ;'00H'を受信したら一行分を表示して改行
-  159A  CD0B00        				CALL	PRINT
-  159D  CDA304        				CALL	CR2
-  15A0  C1            				POP		BC
-  15A1  E1            				POP		HL
-  15A2  18D7          				JR		DL1
-  15A4  CDEA14        	DL4:		CALL	RCVBYTE           ;状態取得(00H=OK)
-  15A7  C1            				POP		BC
-  15A8  E1            				POP		HL
-  15A9  1848          				JR		DLRET
+  156F  C5            				PUSH	BC
+  1570  0621          				LD		B,21H
+  1572  1A            	STLT1:		LD		A,(DE)
+  1573  CD5114        				CALL	TUPPER
+  1576  CD2815        	STLT2:		CALL	SNDBYTE           ;比較文字列を送信
+  1579  13            				INC		DE
+  157A  10F6          				DJNZ	STLT1
+  157C  C1            				POP		BC
+  157D                	DL1:
+  157D  E5            				PUSH	HL
+  157E  C5            				PUSH	BC
+  157F  11F615        				LD		DE,BUF
+  1582  EDB0          				LDIR
+  1584  EB            				EX		DE,HL
+  1585  CDF614        	DL2:		CALL	RCVBYTE           ;'00H'を受信するまでを一行とする
+  1588  FE00          				CP		00H
+  158A  280C          				JR		Z,DL3
+  158C  FEFF          				CP		0FFH              ;'0FFH'を受信したら終了
+  158E  2816          				JR		Z,DL4
+  1590  FEFE          				CP		0FEH              ;'0FEH'を受信したら一時停止して一文字入力待ち
+  1592  2819          				JR		Z,DL5
+  1594  77            				LD		(HL),A
+  1595  23            				INC		HL
+  1596  18ED          				JR		DL2
+  1598  77            	DL3:		LD		(HL),A
+  1599  11F615        				LD		DE,BUF             ;'00H'を受信したら一行分を表示して改行
+  159C  CD0B00        				CALL	PRINT
+  159F  CDA304        				CALL	CR2
+  15A2  C1            				POP		BC
+  15A3  E1            				POP		HL
+  15A4  18D7          				JR		DL1
+  15A6  CDF614        	DL4:		CALL	RCVBYTE           ;状態取得(00H=OK)
+  15A9  C1            				POP		BC
+  15AA  E1            				POP		HL
+  15AB  1848          				JR		DLRET
                       	
-  15AB  114416        	DL5:		LD		DE,MSG_KEY1        ;HIT ANT KEY表示
-  15AE  CD0B00        				CALL	PRINT
-  15B1  3E1E          				LD		A,01EH
-  15B3  CDC804        				CALL	ACCDIS
-  15B6  115916        				LD		DE,MSG_KEY2        ;HIT ANT KEY表示
-  15B9  CD0B00        				CALL	PRINT
-  15BC  CDA304        				CALL	CR2
-  15BF  3E01          	DL6:		LD		A,01H
-  15C1  CD1B00        				CALL	INKEY$            ;1文字入力待ち
-  15C4  CD5114        				CALL	TUPPER
-  15C7  FE00          				CP		00H
-  15C9  28F4          				JR		Z,DL6
-  15CB  FE03          				CP		03H               ;SHIFT+BREAKで打ち切り
-  15CD  281A          				JR		Z,DL7
-  15CF  FE1B          				CP		1BH               ;ESCで打ち切り
-  15D1  2816          				JR		Z,DL7
-  15D3  FE1E          				CP		1EH               ;カーソル↑で打ち切り
-  15D5  2808          				JR		Z,DL9
-  15D7  FE42          				CP		42H               ;「B」で前ページ
-  15D9  2810          				JR		Z,DL8
-  15DB  3E00          				LD		A,00H             ;それ以外で継続
-  15DD  180C          				JR		DL8
-  15DF  3E1E          	DL9:		LD		A,01EH            ;カーソル↑で打ち切ったときにカーソル2行上へ
-  15E1  CD1300        				CALL	ACCPRT
-  15E4  3E1E          				LD		A,01EH
-  15E6  CD1300        				CALL	ACCPRT
-  15E9  3EFF          	DL7:		LD		A,0FFH            ;0FFH中断コードを送信
-  15EB  CD1C15        	DL8:		CALL	SNDBYTE
-  15EE  CDA304        				CALL	CR2
-  15F1  1890          				JR		DL2
+  15AD  114616        	DL5:		LD		DE,MSG_KEY1        ;HIT ANT KEY表示
+  15B0  CD0B00        				CALL	PRINT
+  15B3  3E1E          				LD		A,01EH
+  15B5  CDC804        				CALL	ACCDIS
+  15B8  115B16        				LD		DE,MSG_KEY2        ;HIT ANT KEY表示
+  15BB  CD0B00        				CALL	PRINT
+  15BE  CDA304        				CALL	CR2
+  15C1  3E01          	DL6:		LD		A,01H
+  15C3  CD1B00        				CALL	INKEY$            ;1文字入力待ち
+  15C6  CD5114        				CALL	TUPPER
+  15C9  FE00          				CP		00H
+  15CB  28F4          				JR		Z,DL6
+  15CD  FE03          				CP		03H               ;SHIFT+BREAKで打ち切り
+  15CF  281A          				JR		Z,DL7
+  15D1  FE1B          				CP		1BH               ;ESCで打ち切り
+  15D3  2816          				JR		Z,DL7
+  15D5  FE1E          				CP		1EH               ;カーソル↑で打ち切り
+  15D7  2808          				JR		Z,DL9
+  15D9  FE42          				CP		42H               ;「B」で前ページ
+  15DB  2810          				JR		Z,DL8
+  15DD  3E00          				LD		A,00H             ;それ以外で継続
+  15DF  180C          				JR		DL8
+  15E1  3E1E          	DL9:		LD		A,01EH            ;カーソル↑で打ち切ったときにカーソル2行上へ
+  15E3  CD1300        				CALL	ACCPRT
+  15E6  3E1E          				LD		A,01EH
+  15E8  CD1300        				CALL	ACCPRT
+  15EB  3EFF          	DL7:		LD		A,0FFH            ;0FFH中断コードを送信
+  15ED  CD2815        	DL8:		CALL	SNDBYTE
+  15F0  CDA304        				CALL	CR2
+  15F3  1890          				JR		DL2
                       			
-  15F3                	DLRET:		
-  15F3  C9            				RET
+  15F5                	DLRET:		
+  15F5  C9            				RET
                       			
-  15F4                	BUF:		DS		80
+  15F6                	BUF:		DS		80
                       	
-  1644                	MSG_KEY1:
-  1644  4E4558543A414E				DB		'NEXT:ANY BACK:B BRK:'
-  1658  00            				DB		00H
-  1659                	MSG_KEY2:
-  1659  206F7220455343				DB		' or ESC or SHT+BRK'
-  166B  00            				DB		00H
+  1646                	MSG_KEY1:
+  1646  4E4558543A414E				DB		'NEXT:ANY BACK:B BRK:'
+  165A  00            				DB		00H
+  165B                	MSG_KEY2:
+  165B  206F7220455343				DB		' or ESC or SHT+BRK'
+  166D  00            				DB		00H
                       			
-  166C                	MSG_LD:
-  166C  4C4F4144494E47			DB		'LOADING '
-  1674  00            			DB		00H
+  166E                	MSG_LD:
+  166E  4C4F4144494E47			DB		'LOADING '
+  1676  00            			DB		00H
                       	
-  1675                	MSG_FNAME:
-  1675  46494C45204E41			DB		'FILE NAME FAILED!'
-  1686  00            			DB		00H
+  1677                	MSG_FNAME:
+  1677  46494C45204E41			DB		'FILE NAME FAILED!'
+  1688  00            			DB		00H
                       			
-  1687                	MSG_CMD:
-  1687  434F4D4D414E44			DB		'COMMAND FAILED!'
-  1696  00            			DB		00H
+  1689                	MSG_CMD:
+  1689  434F4D4D414E44			DB		'COMMAND FAILED!'
+  1698  00            			DB		00H
                       			
-  1697                	MSG_F0:
-  1697  53442D43415244			DB		'SD-CARD INITIALIZE ERROR'
-  16AF  00            			DB		00H
+  1699                	MSG_F0:
+  1699  53442D43415244			DB		'SD-CARD INITIALIZE ERROR'
+  16B1  00            			DB		00H
                       			
-  16B0                	MSG_F1:
-  16B0  4E4F542046494E			DB		'NOT FIND FILE'
-  16BD  00            			DB		00H
+  16B2                	MSG_F1:
+  16B2  4E4F542046494E			DB		'NOT FIND FILE'
+  16BF  00            			DB		00H
                       			
-  16BE                	MSG_F3:
-  16BE  46494C45204558			DB		'FILE EXIST'
-  16C8  00            			DB		00H
+  16C0                	MSG_F3:
+  16C0  46494C45204558			DB		'FILE EXIST'
+  16CA  00            			DB		00H
                       			
-  16C9                	MSG99:
-  16C9  204552524F52  			DB		' ERROR'
-  16CF  00            			DB		00H
+  16CB                	MSG99:
+  16CB  204552524F52  			DB		' ERROR'
+  16D1  00            			DB		00H
                       			
                       	;**** コマンド送信 (IN:A コマンドコード)****
-  16D0  CD1C15        	STCD:		CALL	SNDBYTE    ;Aレジスタのコマンドコードを送信
-  16D3  CDEA14        				CALL	RCVBYTE    ;状態取得(00H=OK)
-  16D6  C9            				RET
+  16D2  CD2815        	STCD:		CALL	SNDBYTE    ;Aレジスタのコマンドコードを送信
+  16D5  CDF614        				CALL	RCVBYTE    ;状態取得(00H=OK)
+  16D8  C9            				RET
                       	
                       	;**** コマンド、ファイル名送信 (IN:A コマンドコード HL:ファイルネームの先頭)****
-  16D7  CDEB16        	STCMD:		CALL	STFN       ;ファイルネーム取得
-  16DA  E5            				PUSH	HL
-  16DB  CDD016        				CALL	STCD       ;コマンドコード送信
-  16DE  E1            				POP		HL
-  16DF  A7            				AND		A          ;00以外ならERROR
-  16E0  C21217        				JP		NZ,SVER0
-  16E3  CDFA16        				CALL	STFS       ;ファイルネーム送信
-  16E6  A7            				AND		A          ;00以外ならERROR
-  16E7  C21217        				JP		NZ,SVER0
-  16EA  C9            				RET
+  16D9  CDED16        	STCMD:		CALL	STFN       ;ファイルネーム取得
+  16DC  E5            				PUSH	HL
+  16DD  CDD216        				CALL	STCD       ;コマンドコード送信
+  16E0  E1            				POP		HL
+  16E1  A7            				AND		A          ;00以外ならERROR
+  16E2  C21417        				JP		NZ,SVER0
+  16E5  CDFC16        				CALL	STFS       ;ファイルネーム送信
+  16E8  A7            				AND		A          ;00以外ならERROR
+  16E9  C21417        				JP		NZ,SVER0
+  16EC  C9            				RET
                       	
                       	;****** FILE NAME 取得 (IN:DE コマンド文字の次の文字 OUT:HL ファイルネームの先頭)*********
-  16EB  F5            	STFN:		PUSH	AF
-  16EC  13            	STFN1:		INC		DE         ;ファイルネームまでスペース読み飛ばし
-  16ED  1A            				LD		A,(DE)
-  16EE  FE20          				CP		20H
-  16F0  28FA          				JR		Z,STFN1
-  16F2  FE30          				CP		30H        ;「0」以上の文字でなければエラーとする
-  16F4  DA0D17        				JP		C,STSV2
-  16F7  EB            				EX		DE,HL
-  16F8  F1            				POP		AF
-  16F9  C9            				RET
+  16ED  F5            	STFN:		PUSH	AF
+  16EE  13            	STFN1:		INC		DE         ;ファイルネームまでスペース読み飛ばし
+  16EF  1A            				LD		A,(DE)
+  16F0  FE20          				CP		20H
+  16F2  28FA          				JR		Z,STFN1
+  16F4  FE30          				CP		30H        ;「0」以上の文字でなければエラーとする
+  16F6  DA0F17        				JP		C,STSV2
+  16F9  EB            				EX		DE,HL
+  16FA  F1            				POP		AF
+  16FB  C9            				RET
                       	
                       	;**** ファイルネーム送信(IN:HL ファイルネームの先頭) ******
-  16FA  0620          	STFS:		LD		B,20H
-  16FC  7E            	STFS1:		LD		A,(HL)     ;FNAME送信
-  16FD  CD1C15        				CALL	SNDBYTE
-  1700  23            				INC		HL
-  1701  05            				DEC		B
-  1702  20F8          				JR		NZ,STFS1
-  1704  3E0D          				LD		A,0DH
-  1706  CD1C15        				CALL	SNDBYTE
-  1709  CDEA14        				CALL	RCVBYTE    ;状態取得(00H=OK)
-  170C  C9            				RET
+  16FC  0620          	STFS:		LD		B,20H
+  16FE  7E            	STFS1:		LD		A,(HL)     ;FNAME送信
+  16FF  CD2815        				CALL	SNDBYTE
+  1702  23            				INC		HL
+  1703  05            				DEC		B
+  1704  20F8          				JR		NZ,STFS1
+  1706  3E0D          				LD		A,0DH
+  1708  CD2815        				CALL	SNDBYTE
+  170B  CDF614        				CALL	RCVBYTE    ;状態取得(00H=OK)
+  170E  C9            				RET
                       	
-  170D                	STSV2:                      ;ファイルネームの取得に失敗
-  170D  117516        				LD		DE,MSG_FNAME
-  1710  182B          				JR		ERRMSG
-  1712                	SVER0:
-  1712  D1            				POP		DE         ;CALL元STACKを破棄する
-  1713                	SVERR:
-  1713  FEF0          				CP		0F0H
-  1715  2005          				JR		NZ,ERR3
-  1717  119716        				LD		DE,MSG_F0  ;SD-CARD INITIALIZE ERROR
-  171A  1821          				JR		ERRMSG
-  171C  FEF1          	ERR3:		CP		0F1H
-  171E  2005          				JR		NZ,ERR4
-  1720  11B016        				LD		DE,MSG_F1  ;NOT FIND FILE
-  1723  1818          				JR		ERRMSG
-  1725  FEF3          	ERR4:		CP		0F3H
-  1727  2005          				JR		NZ,ERR5
-  1729  11BE16        				LD		DE,MSG_F3  ;FILE EXIST
-  172C  180F          				JR		ERRMSG
-  172E  FEF4          	ERR5:		CP		0F4H
-  1730  2005          				JR		NZ,ERR99
-  1732  118716        				LD		DE,MSG_CMD
-  1735  1806          				JR		ERRMSG
-  1737  CD0712        	ERR99:		CALL	ACHXPR
-  173A  11C916        				LD		DE,MSG99   ;その他ERROR
-  173D  CD0B00        	ERRMSG:		CALL	PRINT
-  1740  CDA304        				CALL	CR2
-  1743  C9            	MON:		RET
+  170F                	STSV2:                      ;ファイルネームの取得に失敗
+  170F  117716        				LD		DE,MSG_FNAME
+  1712  182B          				JR		ERRMSG
+  1714                	SVER0:
+  1714  D1            				POP		DE         ;CALL元STACKを破棄する
+  1715                	SVERR:
+  1715  FEF0          				CP		0F0H
+  1717  2005          				JR		NZ,ERR3
+  1719  119916        				LD		DE,MSG_F0  ;SD-CARD INITIALIZE ERROR
+  171C  1821          				JR		ERRMSG
+  171E  FEF1          	ERR3:		CP		0F1H
+  1720  2005          				JR		NZ,ERR4
+  1722  11B216        				LD		DE,MSG_F1  ;NOT FIND FILE
+  1725  1818          				JR		ERRMSG
+  1727  FEF3          	ERR4:		CP		0F3H
+  1729  2005          				JR		NZ,ERR5
+  172B  11C016        				LD		DE,MSG_F3  ;FILE EXIST
+  172E  180F          				JR		ERRMSG
+  1730  FEF4          	ERR5:		CP		0F4H
+  1732  2005          				JR		NZ,ERR99
+  1734  118916        				LD		DE,MSG_CMD
+  1737  1806          				JR		ERRMSG
+  1739  CD0712        	ERR99:		CALL	ACHXPR
+  173C  11CB16        				LD		DE,MSG99   ;その他ERROR
+  173F  CD0B00        	ERRMSG:		CALL	PRINT
+  1742  CDA304        				CALL	CR2
+  1745  C9            	MON:		RET
                       	
-  1744                	L_COMMAND:
+  1746                	L_COMMAND:
                       	;**** LOAD ****
                       	;受信ヘッダ情報をセットし、SDカードからLOAD実行
-  1744  F3            	SDLOAD:		DI
-  1745  3E81          				LD		A,81H  ;LOADコマンド81H
-  1747  CDD716        				CALL	STCMD
-  174A  CD6717        				CALL	HDRCV      ;ヘッダ情報受信
+  1746  F3            	SDLOAD:		DI
+  1747  3E81          				LD		A,81H  ;LOADコマンド81H
+  1749  CDD916        				CALL	STCMD
+  174C  CD6917        				CALL	HDRCV      ;ヘッダ情報受信
                       	
-  174D  3EE4          				LD		A,0E4H
-  174F  CDFE0D        				CALL	COMOUT
-  1752  AF            				XOR		A
-  1753  CD540B        				CALL	TRANS49
+  174F  3EE4          				LD		A,0E4H
+  1751  CDFE0D        				CALL	COMOUT
+  1754  AF            				XOR		A
+  1755  CD540B        				CALL	TRANS49
                       	
-  1756  310000        				LD		SP,0000H
+  1758  310000        				LD		SP,0000H
                       	
-  1759  218817        				LD		HL,DBRCV0
-  175C  1120FF        				LD		DE,DBRCV
-  175F  015E00        				LD		BC,ENT6-DBRCV
-  1762  EDB0          				LDIR
+  175B  218A17        				LD		HL,DBRCV0
+  175E  1120FF        				LD		DE,DBRCV
+  1761  015E00        				LD		BC,ENT6-DBRCV
+  1764  EDB0          				LDIR
                       				
-  1764  C320FF        	SDLOAD2:	JP		DBRCV      ;データ受信
+  1766  C320FF        	SDLOAD2:	JP		DBRCV      ;データ受信
                       	
                       	;ヘッダ受信
-  1767  2100FF        	HDRCV:		LD		HL,IPLFCB
-  176A  0620          				LD		B,20H
-  176C  CDEA14        	HDRC1:		CALL	RCVBYTE    ;IPL用FCB受信
-  176F  77            				LD		(HL),A
-  1770  23            				INC		HL
-  1771  10F9          				DJNZ	HDRC1
-  1773  2111FF        				LD		HL,FNAME+16
-  1776  AF            				XOR		A
-  1777  77            				LD		(HL),A
-  1778  116C16        				LD		DE,MSG_LD  ;ファイルネームLOADING表示
-  177B  CD0B00        				CALL	PRINT
-  177E  1101FF        				LD		DE,FNAME
-  1781  CD0B00        				CALL	PRINT
-  1784  CDA304        				CALL	CR2
-  1787  C9            				RET
+  1769  2100FF        	HDRCV:		LD		HL,IPLFCB
+  176C  0620          				LD		B,20H
+  176E  CDF614        	HDRC1:		CALL	RCVBYTE    ;IPL用FCB受信
+  1771  77            				LD		(HL),A
+  1772  23            				INC		HL
+  1773  10F9          				DJNZ	HDRC1
+  1775  2111FF        				LD		HL,FNAME+16
+  1778  AF            				XOR		A
+  1779  77            				LD		(HL),A
+  177A  116E16        				LD		DE,MSG_LD  ;ファイルネームLOADING表示
+  177D  CD0B00        				CALL	PRINT
+  1780  1101FF        				LD		DE,FNAME
+  1783  CD0B00        				CALL	PRINT
+  1786  CDA304        				CALL	CR2
+  1789  C9            				RET
                       	
                       	;データ受信
-  1788                	DBRCV0:
+  178A                	DBRCV0:
   FF20                				ORG		0FF20H
                       				
   FF20  F3            	DBRCV:		DI

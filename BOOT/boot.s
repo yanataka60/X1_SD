@@ -152,6 +152,12 @@ INIT2:		LD		A,00H      ;PORTA <- 0
 			OUT		(C),A
 			LD		BC,007EH
 			OUT		(C),A   ;PORTC <- 0
+
+;**** Fコマンド、Lコマンドジャンプ先設定
+			LD		HL,14A3H
+			LD		(1050H),HL
+			LD		HL,14A6H
+			LD		(1059H),HL
 			RET
 
 ;**** 1BYTE受信 ****
@@ -222,14 +228,6 @@ SND4BIT:
 			RET
 		
 F_COMMAND:
-			LD		A,(DE)
-			CALL	TUPPER
-			CP		'D'
-			JR		Z,FD_COMMAND
-			RET
-
-FD_COMMAND:
-			INC		DE
 			LD		HL,DEFDIR         ;行頭に'*L 'を付けることでカーソルを移動させリターンで実行できるように
 			LD		BC,DEND-DEFDIR
 			CALL	DIRLIST
