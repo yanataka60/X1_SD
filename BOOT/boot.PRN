@@ -155,9 +155,9 @@
   14E7  ED79          				OUT		(C),A   ;PORTC <- 0
                       	
                       	;**** Fコマンド、Lコマンドジャンプ先設定
-  14E9  21A314        				LD		HL,14A3H
+  14E9  21A314        				LD		HL,F_COM
   14EC  225010        				LD		(1050H),HL
-  14EF  21A614        				LD		HL,14A6H
+  14EF  21A614        				LD		HL,L_COM
   14F2  225910        				LD		(1059H),HL
   14F5  C9            				RET
                       	

@@ -154,9 +154,9 @@ INIT2:		LD		A,00H      ;PORTA <- 0
 			OUT		(C),A   ;PORTC <- 0
 
 ;**** Fコマンド、Lコマンドジャンプ先設定
-			LD		HL,14A3H
+			LD		HL,F_COM
 			LD		(1050H),HL
-			LD		HL,14A6H
+			LD		HL,L_COM
 			LD		(1059H),HL
 			RET
 
