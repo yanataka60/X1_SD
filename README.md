@@ -241,13 +241,13 @@ J2の2x22Pinコネクタは基板裏側にハンダ付けします。
 
 例)
 
-*L TEST[CR]
+*L　TEST[CR]
 
-*L TEST.x1t[CR]
+*L　TEST.x1t[CR]
 
 *LTEST[CR]
 
-*L  TEST[CR]
+*L　　TEST[CR]
 
 ### F[CR]
 　SD-CARDルートディレクトリにあるファイルの一覧を表示します。20件表示したところで指示待ちになるので打ち切るならESC、SHIFT+BREAK又は↑を入力すると打ち切られ、Bキーで前の20件に戻ります。それ以外のキーで次の20件を表示します。
@@ -270,15 +270,15 @@ xはX1のキーボードから入力可能な32文字までの文字列です。
 
 例)
 
-*F S[CR]
+*F　S[CR]
 
-*F SP[CR]
+*F　SP[CR]
 
-*F BASIC S[CR]
+*F　BASIC S[CR]
 
 *FS[CR]
 
-*F  S[CR]
+*F　　S[CR]
 
 ## 操作上の注意
 　「SD-CARD INITIALIZE ERROR」と表示されたときは、電源を入れ直してみてください。
