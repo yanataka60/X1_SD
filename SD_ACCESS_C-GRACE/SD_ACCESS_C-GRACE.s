@@ -139,7 +139,7 @@ START:
 			CALL	PRINT
 			JP		MONOP
 
-TITLE:		DB		'          ** X1_SD Launcher **',0AH,0DH,00H
+TITLE:		DB		'          ** C-GRACE Launcher **',0AH,0DH,00H
 
 ;**** 8255初期化 ****
 ;PORTC下位BITをOUTPUT、上位BITをINPUT、PORTBをINPUT、PORTAをOUTPUT
@@ -443,18 +443,6 @@ SDLOAD:		DI
 			CALL	STCMD
 			CALL	HDRCV      ;ヘッダ情報受信
 
-			LD		A,0E4H     ;サブCPU割込み停止
-			CALL	COMOUT
-			XOR		A
-			CALL	TRANS49
-
-			LD		SP,0000H
-
-			LD		HL,DBRCV0       ;実データ読み込み処理をFF20Hへ転送
-			LD		DE,DBRCV
-			LD		BC,ENT6-DBRCV
-			LDIR
-			
 SDLOAD2:	JP		DBRCV      ;データ受信
 
 ;ヘッダ受信
@@ -475,15 +463,10 @@ HDRC1:		CALL	RCVBYTE    ;IPL用FCB受信
 			RET
 
 ;データ受信
-DBRCV0:
-			ORG		0FF20H
-			
 DBRCV:		DI
-			LD		HL,(EXEAD)
-			PUSH	HL
-			LD		HL,(SADRS)
+			LD		HL,2000H    ;C-GRACEのデータは常に2000Hから読み込み
 			LD		DE,(FSIZE)
-DBRLOP:		CALL	RCVBYTE2
+DBRLOP:		CALL	RCVBYTE
 			LD		(HL),A
 			DEC		DE
 			LD		A,D
@@ -491,55 +474,15 @@ DBRLOP:		CALL	RCVBYTE2
 			INC		HL
 			JR		NZ,DBRLOP   ;DE=0までLOOP
 
-			LD		BC,(SADRS)
-			LD		A,B
-			OR		C
-			JR		Z,DBRLOP1
-			DEC		BC
-			DEC		BC
-			LD		HL,0000H    ;読み込み開始位置が0000Hでなかったら念のため、0000H～読み込み開始位置までのメモリをクリア
-			LD		DE,0001H
-			LD		(HL),00H
-			LDIR
-
 DBRLOP1:
-			POP		HL
-			JP		(HL)        ;実行番地へジャンプ
+			CALL	WIDTH80           ;80桁表示設定
+			CALL	6000H             ;C-GRACE EXECUTER実行
+			LD		A,01H
+			CALL	INKEY$            ;1文字入力待ち
+			CALL	WIDTH40           ;40桁表示設定、画面クリア
+			POP		DE                ;MONITORへの戻り先を破棄
+			JP		START             ;C-GRACE LAUNCHERであることを明確にするため
 
-;**** 1BYTE受信 ****
-;受信DATAをAレジスタにセットしてリターン
-RCVBYTE2:
-			PUSH	BC
-			CALL	F1CHK2      ;PORTC BIT7が1になるまでLOOP
-			LD		BC,007DH
-			IN		A,(C)   ;PORTB -> A
-			PUSH 	AF
-			LD		A,05H
-			LD		BC,007FH
-			OUT		(C),A    ;PORTC BIT2 <- 1
-			CALL	F2CHK2      ;PORTC BIT7が0になるまでLOOP
-			LD		A,04H
-			LD		BC,007FH
-			OUT		(C),A    ;PORTC BIT2 <- 0
-			POP 	AF
-			POP		BC
-			RET
-
-;**** BUSYをCHECK(1) ****
-; 7EH BIT7が1になるまでLOP
-F1CHK2:		LD		BC,007EH
-			IN		A,(C)
-			AND		80H        ;PORTC BIT7 = 1?
-			JR		Z,F1CHK2
-			RET
-
-;**** BUSYをCHECK(0) ****
-; 7EH BIT7が0になるまでLOOP
-F2CHK2:		LD		BC,007EH
-			IN		A,(C)
-			AND		80H        ;PORTC BIT7 = 0?
-			JR		NZ,F2CHK2
-			RET
-
-ENT6:
+ENT6:		ORG		5FFFH
+			NOP
 			END
