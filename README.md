@@ -77,7 +77,7 @@ MicroSD Card Adapterについているピンヘッダを除去してハンダ付
 
 
 ## ROMへの書込み
-　まず、HuBASIC CZ-8CB01からIOCS(0000h～149Fh)を抜き出し、バイナリファイルとして保存します。
+　まず、BASIC CZ-8CB01からIOCS(0000h～149Fh)を抜き出し、バイナリファイルとして保存します。
 
 　CZ-8FB01、CZ-8FB01も大丈夫だとは思いますが、検証していません。なお、X1turbo用BASICは使えません。
 
@@ -344,7 +344,9 @@ xはX1のキーボードから入力可能な32文字までの文字列です。
 
 ## アプリケーションからSD-CARDとのLOAD、SAVEをするための対応
 ### BASIC CZ-8CB01
-　ROMへの書込みの為にHuBASIC CZ-8CB01をバイナリファイルとしたのと同様の操作をします。
+　BASIC CZ-8CB01にSDアクセス用ルーチンを付加してX1Tファイルを作成します。
+
+　ROMへの書込みの為にBASIC CZ-8CB01をバイナリファイルとしたのと同様の操作をしてBASIC CZ-8CB01のバイナリファイルを作成します。
 
 　DumpList Editorを使ってWav又はtapファイルを読み込み、「マシン語入力に送る」を実行します。
 
@@ -372,8 +374,8 @@ xはX1のキーボードから入力可能な32文字までの文字列です。
 
 　SAVEコマンドにAオプションをつけることでアスキー形式でのSAVEも出来ますが、SAVE、LOADに非常に時間が掛かります。気長のお待ちください。
 
-#### DumpListEditorによるWindowsパソコンを使ってのBASICプログラム作成
-　DumpListEditorを使えばWindowsパソコンでBASIC CZ-8CB01用のBASICプログラムが入力できますが、保存方法がテキスト形式又はTAP形式のみでX1T形式での保存が出来ません。
+#### DumpListEditorで入力したBASICプログラムをX1T形式に変換する方法
+　DumpListEditorを使えばWindowsパソコンでBASIC CZ-8CB01用のBASICプログラムが入力できますが、保存方法がテキスト形式又はTAP形式のみでそのままX1T形式で保存することが出来ません。
 
 　以下の方法でX1T形式に変換してください。
 
@@ -410,6 +412,8 @@ xはX1のキーボードから入力可能な32文字までの文字列です。
 例)
 
 ![CZ-8CB01_6](https://github.com/yanataka60/X1_SD/blob/main/JPEG/CZ-8CB01(6).jpg)
+
+##### なお、今のところ、X1T形式で保存されたBASICプログラムをDumpListEditorで編集する方法はありません。
 
 
 ## 謝辞
