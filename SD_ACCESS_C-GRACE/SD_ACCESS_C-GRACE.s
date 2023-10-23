@@ -490,8 +490,7 @@ DBRLOP1:
 			LD		A,01H
 			CALL	INKEY$            ;1文字入力待ち
 			CALL	WIDTH40           ;40桁表示設定、画面クリア
-			POP		DE                ;MONITORへの戻り先を破棄
-			JP		START             ;C-GRACE LAUNCHERであることを明確にするため
+			RET
 
 DBRERR:
 			LD		DE,(FSIZE)        ;空読み(データ受信しない仕様にするためにはArduinoの改修が必要なため)

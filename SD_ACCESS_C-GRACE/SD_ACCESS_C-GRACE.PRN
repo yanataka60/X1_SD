@@ -473,7 +473,7 @@
   1797  2A14FF        				LD		HL,(SADRS)    ;読み込み開始アドレスが2000HでなければC-GRACEのデータではない
   179A  110020        				LD		DE,2000H
   179D  ED52          				SBC		HL,DE
-  179F  2023          				JR		NZ,DBRERR
+  179F  2020          				JR		NZ,DBRERR
                       				
   17A1  2A14FF        				LD		HL,(SADRS)
   17A4  ED5B12FF      				LD		DE,(FSIZE)
@@ -491,21 +491,20 @@
   17B8  3E01          				LD		A,01H
   17BA  CD1B00        				CALL	INKEY$            ;1文字入力待ち
   17BD  CD9809        				CALL	WIDTH40           ;40桁表示設定、画面クリア
-  17C0  D1            				POP		DE                ;MONITORへの戻り先を破棄
-  17C1  C3A914        				JP		START             ;C-GRACE LAUNCHERであることを明確にするため
+  17C0  C9            				RET
                       	
-  17C4                	DBRERR:
-  17C4  ED5B12FF      				LD		DE,(FSIZE)        ;空読み(データ受信しない仕様にするためにはArduinoの改修が必要なため)
-  17C8  CDF814        	DBRLOP2:	CALL	RCVBYTE
-  17CB  1B            				DEC		DE
-  17CC  7A            				LD		A,D
-  17CD  B3            				OR		E
-  17CE  20F8          				JR		NZ,DBRLOP2        ;DE=0までLOOP
+  17C1                	DBRERR:
+  17C1  ED5B12FF      				LD		DE,(FSIZE)        ;空読み(データ受信しない仕様にするためにはArduinoの改修が必要なため)
+  17C5  CDF814        	DBRLOP2:	CALL	RCVBYTE
+  17C8  1B            				DEC		DE
+  17C9  7A            				LD		A,D
+  17CA  B3            				OR		E
+  17CB  20F8          				JR		NZ,DBRLOP2        ;DE=0までLOOP
                       	
-  17D0  11DB16        				LD		DE,MSG_F4         ;NOT C-GRACE DATA
-  17D3  CD0B00        				CALL	PRINT
-  17D6  CDA304        				CALL	CR2
-  17D9  C9            				RET
+  17CD  11DB16        				LD		DE,MSG_F4         ;NOT C-GRACE DATA
+  17D0  CD0B00        				CALL	PRINT
+  17D3  CDA304        				CALL	CR2
+  17D6  C9            				RET
                       	
   5FFF                	ENT6:		ORG		5FFFH
   5FFF  00            				NOP
