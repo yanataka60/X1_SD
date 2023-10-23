@@ -361,6 +361,10 @@ MSG_F3:
 		DB		'FILE EXIST'
 		DB		00H
 		
+MSG_F4:
+		DB		'NOT C-GRACE DATA'
+		DB		00H
+		
 MSG99:
 		DB		' ERROR'
 		DB		00H
@@ -464,7 +468,13 @@ HDRC1:		CALL	RCVBYTE    ;IPL用FCB受信
 
 ;データ受信
 DBRCV:		DI
-			LD		HL,2000H    ;C-GRACEのデータは常に2000Hから読み込み
+			XOR		A
+			LD		HL,(SADRS)    ;読み込み開始アドレスが2000HでなければC-GRACEのデータではない
+			LD		DE,2000H
+			SBC		HL,DE
+			JR		NZ,DBRERR
+			
+			LD		HL,(SADRS)
 			LD		DE,(FSIZE)
 DBRLOP:		CALL	RCVBYTE
 			LD		(HL),A
@@ -482,6 +492,19 @@ DBRLOP1:
 			CALL	WIDTH40           ;40桁表示設定、画面クリア
 			POP		DE                ;MONITORへの戻り先を破棄
 			JP		START             ;C-GRACE LAUNCHERであることを明確にするため
+
+DBRERR:
+			LD		DE,(FSIZE)        ;空読み(データ受信しない仕様にするためにはArduinoの改修が必要なため)
+DBRLOP2:	CALL	RCVBYTE
+			DEC		DE
+			LD		A,D
+			OR		E
+			JR		NZ,DBRLOP2        ;DE=0までLOOP
+
+			LD		DE,MSG_F4         ;NOT C-GRACE DATA
+			CALL	PRINT
+			CALL	CR2
+			RET
 
 ENT6:		ORG		5FFFH
 			NOP

@@ -132,7 +132,7 @@
   14A0                				ORG		14A0H
   14A0  C3A914        				JP		START
   14A3  C35715        	F_COM:		JP		F_COMMAND
-  14A6  C35717        	L_COM:		JP		L_COMMAND
+  14A6  C36817        	L_COM:		JP		L_COMMAND
                       	
   14A9                	START:
   14A9  CDD814        				CALL	INIT
@@ -244,7 +244,7 @@
   1568  010300        				LD		BC,DEND-DEFDIR
   156B  CD7615        				CALL	DIRLIST
   156E  A7            				AND		A                 ;00以外ならERROR
-  156F  C22617        				JP		NZ,SVERR
+  156F  C23717        				JP		NZ,SVERR
   1572  C9            				RET
                       	
   1573                	DEFDIR:
@@ -255,7 +255,7 @@
                       	;****              戻り値 A=エラーコード ****
   1576                	DIRLIST:
   1576  3E83          				LD		A,83H      ;DIRLISTコマンド83Hを送信
-  1578  CDE216        				CALL	STCD       ;コマンドコード送信
+  1578  CDF316        				CALL	STCD       ;コマンドコード送信
   157B  A7            				AND		A          ;00以外ならERROR
   157C  C20516        				JP		NZ,DLRET
                       			
@@ -362,127 +362,150 @@
   16D0  46494C45204558			DB		'FILE EXIST'
   16DA  00            			DB		00H
                       			
-  16DB                	MSG99:
-  16DB  204552524F52  			DB		' ERROR'
-  16E1  00            			DB		00H
+  16DB                	MSG_F4:
+  16DB  4E4F5420432D47			DB		'NOT C-GRACE DATA'
+  16EB  00            			DB		00H
+                      			
+  16EC                	MSG99:
+  16EC  204552524F52  			DB		' ERROR'
+  16F2  00            			DB		00H
                       			
                       	;**** コマンド送信 (IN:A コマンドコード)****
-  16E2  CD2A15        	STCD:		CALL	SNDBYTE    ;Aレジスタのコマンドコードを送信
-  16E5  CDF814        				CALL	RCVBYTE    ;状態取得(00H=OK)
-  16E8  C9            				RET
+  16F3  CD2A15        	STCD:		CALL	SNDBYTE    ;Aレジスタのコマンドコードを送信
+  16F6  CDF814        				CALL	RCVBYTE    ;状態取得(00H=OK)
+  16F9  C9            				RET
                       	
                       	;**** コマンド、ファイル名送信 (IN:A コマンドコード HL:ファイルネームの先頭)****
-  16E9  1B            	STCMD:		DEC		DE
-  16EA  CDFE16        				CALL	STFN       ;ファイルネーム取得
-  16ED  E5            				PUSH	HL
-  16EE  CDE216        				CALL	STCD       ;コマンドコード送信
-  16F1  E1            				POP		HL
-  16F2  A7            				AND		A          ;00以外ならERROR
-  16F3  C22517        				JP		NZ,SVER0
-  16F6  CD0D17        				CALL	STFS       ;ファイルネーム送信
-  16F9  A7            				AND		A          ;00以外ならERROR
-  16FA  C22517        				JP		NZ,SVER0
-  16FD  C9            				RET
+  16FA  1B            	STCMD:		DEC		DE
+  16FB  CD0F17        				CALL	STFN       ;ファイルネーム取得
+  16FE  E5            				PUSH	HL
+  16FF  CDF316        				CALL	STCD       ;コマンドコード送信
+  1702  E1            				POP		HL
+  1703  A7            				AND		A          ;00以外ならERROR
+  1704  C23617        				JP		NZ,SVER0
+  1707  CD1E17        				CALL	STFS       ;ファイルネーム送信
+  170A  A7            				AND		A          ;00以外ならERROR
+  170B  C23617        				JP		NZ,SVER0
+  170E  C9            				RET
                       	
                       	;****** FILE NAME 取得 (IN:DE コマンド文字の次の文字 OUT:HL ファイルネームの先頭)*********
-  16FE  F5            	STFN:		PUSH	AF
-  16FF  13            	STFN1:		INC		DE         ;ファイルネームまでスペース読み飛ばし
-  1700  1A            				LD		A,(DE)
-  1701  FE20          				CP		20H
-  1703  28FA          				JR		Z,STFN1
-  1705  FE30          				CP		30H        ;「0」以上の文字でなければエラーとする
-  1707  DA2017        				JP		C,STSV2
-  170A  EB            				EX		DE,HL
-  170B  F1            				POP		AF
-  170C  C9            				RET
+  170F  F5            	STFN:		PUSH	AF
+  1710  13            	STFN1:		INC		DE         ;ファイルネームまでスペース読み飛ばし
+  1711  1A            				LD		A,(DE)
+  1712  FE20          				CP		20H
+  1714  28FA          				JR		Z,STFN1
+  1716  FE30          				CP		30H        ;「0」以上の文字でなければエラーとする
+  1718  DA3117        				JP		C,STSV2
+  171B  EB            				EX		DE,HL
+  171C  F1            				POP		AF
+  171D  C9            				RET
                       	
                       	;**** ファイルネーム送信(IN:HL ファイルネームの先頭) ******
-  170D  0620          	STFS:		LD		B,20H
-  170F  7E            	STFS1:		LD		A,(HL)     ;FNAME送信
-  1710  CD2A15        				CALL	SNDBYTE
-  1713  23            				INC		HL
-  1714  05            				DEC		B
-  1715  20F8          				JR		NZ,STFS1
-  1717  3E0D          				LD		A,0DH
-  1719  CD2A15        				CALL	SNDBYTE
-  171C  CDF814        				CALL	RCVBYTE    ;状態取得(00H=OK)
-  171F  C9            				RET
+  171E  0620          	STFS:		LD		B,20H
+  1720  7E            	STFS1:		LD		A,(HL)     ;FNAME送信
+  1721  CD2A15        				CALL	SNDBYTE
+  1724  23            				INC		HL
+  1725  05            				DEC		B
+  1726  20F8          				JR		NZ,STFS1
+  1728  3E0D          				LD		A,0DH
+  172A  CD2A15        				CALL	SNDBYTE
+  172D  CDF814        				CALL	RCVBYTE    ;状態取得(00H=OK)
+  1730  C9            				RET
                       	
-  1720                	STSV2:                      ;ファイルネームの取得に失敗
-  1720  118716        				LD		DE,MSG_FNAME
-  1723  182B          				JR		ERRMSG
-  1725                	SVER0:
-  1725  D1            				POP		DE         ;CALL元STACKを破棄する
-  1726                	SVERR:
-  1726  FEF0          				CP		0F0H
-  1728  2005          				JR		NZ,ERR3
-  172A  11A916        				LD		DE,MSG_F0  ;SD-CARD INITIALIZE ERROR
-  172D  1821          				JR		ERRMSG
-  172F  FEF1          	ERR3:		CP		0F1H
-  1731  2005          				JR		NZ,ERR4
-  1733  11C216        				LD		DE,MSG_F1  ;NOT FIND FILE
-  1736  1818          				JR		ERRMSG
-  1738  FEF3          	ERR4:		CP		0F3H
-  173A  2005          				JR		NZ,ERR5
-  173C  11D016        				LD		DE,MSG_F3  ;FILE EXIST
-  173F  180F          				JR		ERRMSG
-  1741  FEF4          	ERR5:		CP		0F4H
-  1743  2005          				JR		NZ,ERR99
-  1745  119916        				LD		DE,MSG_CMD
-  1748  1806          				JR		ERRMSG
-  174A  CD0712        	ERR99:		CALL	ACHXPR
-  174D  11DB16        				LD		DE,MSG99   ;その他ERROR
-  1750  CD0B00        	ERRMSG:		CALL	PRINT
-  1753  CDA304        				CALL	CR2
-  1756  C9            	MON:		RET
+  1731                	STSV2:                      ;ファイルネームの取得に失敗
+  1731  118716        				LD		DE,MSG_FNAME
+  1734  182B          				JR		ERRMSG
+  1736                	SVER0:
+  1736  D1            				POP		DE         ;CALL元STACKを破棄する
+  1737                	SVERR:
+  1737  FEF0          				CP		0F0H
+  1739  2005          				JR		NZ,ERR3
+  173B  11A916        				LD		DE,MSG_F0  ;SD-CARD INITIALIZE ERROR
+  173E  1821          				JR		ERRMSG
+  1740  FEF1          	ERR3:		CP		0F1H
+  1742  2005          				JR		NZ,ERR4
+  1744  11C216        				LD		DE,MSG_F1  ;NOT FIND FILE
+  1747  1818          				JR		ERRMSG
+  1749  FEF3          	ERR4:		CP		0F3H
+  174B  2005          				JR		NZ,ERR5
+  174D  11D016        				LD		DE,MSG_F3  ;FILE EXIST
+  1750  180F          				JR		ERRMSG
+  1752  FEF4          	ERR5:		CP		0F4H
+  1754  2005          				JR		NZ,ERR99
+  1756  119916        				LD		DE,MSG_CMD
+  1759  1806          				JR		ERRMSG
+  175B  CD0712        	ERR99:		CALL	ACHXPR
+  175E  11EC16        				LD		DE,MSG99   ;その他ERROR
+  1761  CD0B00        	ERRMSG:		CALL	PRINT
+  1764  CDA304        				CALL	CR2
+  1767  C9            	MON:		RET
                       	
-  1757                	L_COMMAND:
+  1768                	L_COMMAND:
                       	;**** LOAD ****
                       	;受信ヘッダ情報をセットし、SDカードからLOAD実行
-  1757  F3            	SDLOAD:		DI
-  1758  3E81          				LD		A,81H  ;LOADコマンド81H
-  175A  CDE916        				CALL	STCMD
-  175D  CD6317        				CALL	HDRCV      ;ヘッダ情報受信
+  1768  F3            	SDLOAD:		DI
+  1769  3E81          				LD		A,81H  ;LOADコマンド81H
+  176B  CDFA16        				CALL	STCMD
+  176E  CD7417        				CALL	HDRCV      ;ヘッダ情報受信
                       	
-  1760  C38417        	SDLOAD2:	JP		DBRCV      ;データ受信
+  1771  C39517        	SDLOAD2:	JP		DBRCV      ;データ受信
                       	
                       	;ヘッダ受信
-  1763  2100FF        	HDRCV:		LD		HL,IPLFCB
-  1766  0620          				LD		B,20H
-  1768  CDF814        	HDRC1:		CALL	RCVBYTE    ;IPL用FCB受信
-  176B  77            				LD		(HL),A
-  176C  23            				INC		HL
-  176D  10F9          				DJNZ	HDRC1
-  176F  2111FF        				LD		HL,FNAME+16
-  1772  AF            				XOR		A
-  1773  77            				LD		(HL),A
-  1774  117E16        				LD		DE,MSG_LD  ;ファイルネームLOADING表示
-  1777  CD0B00        				CALL	PRINT
-  177A  1101FF        				LD		DE,FNAME
-  177D  CD0B00        				CALL	PRINT
-  1780  CDA304        				CALL	CR2
-  1783  C9            				RET
+  1774  2100FF        	HDRCV:		LD		HL,IPLFCB
+  1777  0620          				LD		B,20H
+  1779  CDF814        	HDRC1:		CALL	RCVBYTE    ;IPL用FCB受信
+  177C  77            				LD		(HL),A
+  177D  23            				INC		HL
+  177E  10F9          				DJNZ	HDRC1
+  1780  2111FF        				LD		HL,FNAME+16
+  1783  AF            				XOR		A
+  1784  77            				LD		(HL),A
+  1785  117E16        				LD		DE,MSG_LD  ;ファイルネームLOADING表示
+  1788  CD0B00        				CALL	PRINT
+  178B  1101FF        				LD		DE,FNAME
+  178E  CD0B00        				CALL	PRINT
+  1791  CDA304        				CALL	CR2
+  1794  C9            				RET
                       	
                       	;データ受信
-  1784  F3            	DBRCV:		DI
-  1785  210020        				LD		HL,2000H    ;C-GRACEのデータは常に2000Hから読み込み
-  1788  ED5B12FF      				LD		DE,(FSIZE)
-  178C  CDF814        	DBRLOP:		CALL	RCVBYTE
-  178F  77            				LD		(HL),A
-  1790  1B            				DEC		DE
-  1791  7A            				LD		A,D
-  1792  B3            				OR		E
-  1793  23            				INC		HL
-  1794  20F6          				JR		NZ,DBRLOP   ;DE=0までLOOP
+  1795  F3            	DBRCV:		DI
+  1796  AF            				XOR		A
+  1797  2A14FF        				LD		HL,(SADRS)    ;読み込み開始アドレスが2000HでなければC-GRACEのデータではない
+  179A  110020        				LD		DE,2000H
+  179D  ED52          				SBC		HL,DE
+  179F  2023          				JR		NZ,DBRERR
+                      				
+  17A1  2A14FF        				LD		HL,(SADRS)
+  17A4  ED5B12FF      				LD		DE,(FSIZE)
+  17A8  CDF814        	DBRLOP:		CALL	RCVBYTE
+  17AB  77            				LD		(HL),A
+  17AC  1B            				DEC		DE
+  17AD  7A            				LD		A,D
+  17AE  B3            				OR		E
+  17AF  23            				INC		HL
+  17B0  20F6          				JR		NZ,DBRLOP   ;DE=0までLOOP
                       	
-  1796                	DBRLOP1:
-  1796  CD8C09        				CALL	WIDTH80           ;80桁表示設定
-  1799  CD0060        				CALL	6000H             ;C-GRACE EXECUTER実行
-  179C  3E01          				LD		A,01H
-  179E  CD1B00        				CALL	INKEY$            ;1文字入力待ち
-  17A1  CD9809        				CALL	WIDTH40           ;40桁表示設定、画面クリア
-  17A4  D1            				POP		DE                ;MONITORへの戻り先を破棄
-  17A5  C3A914        				JP		START             ;C-GRACE LAUNCHERであることを明確にするため
+  17B2                	DBRLOP1:
+  17B2  CD8C09        				CALL	WIDTH80           ;80桁表示設定
+  17B5  CD0060        				CALL	6000H             ;C-GRACE EXECUTER実行
+  17B8  3E01          				LD		A,01H
+  17BA  CD1B00        				CALL	INKEY$            ;1文字入力待ち
+  17BD  CD9809        				CALL	WIDTH40           ;40桁表示設定、画面クリア
+  17C0  D1            				POP		DE                ;MONITORへの戻り先を破棄
+  17C1  C3A914        				JP		START             ;C-GRACE LAUNCHERであることを明確にするため
+                      	
+  17C4                	DBRERR:
+  17C4  ED5B12FF      				LD		DE,(FSIZE)        ;空読み(データ受信しない仕様にするためにはArduinoの改修が必要なため)
+  17C8  CDF814        	DBRLOP2:	CALL	RCVBYTE
+  17CB  1B            				DEC		DE
+  17CC  7A            				LD		A,D
+  17CD  B3            				OR		E
+  17CE  20F8          				JR		NZ,DBRLOP2        ;DE=0までLOOP
+                      	
+  17D0  11DB16        				LD		DE,MSG_F4         ;NOT C-GRACE DATA
+  17D3  CD0B00        				CALL	PRINT
+  17D6  CDA304        				CALL	CR2
+  17D9  C9            				RET
                       	
   5FFF                	ENT6:		ORG		5FFFH
   5FFF  00            				NOP
