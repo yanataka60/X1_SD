@@ -79,7 +79,7 @@ MicroSD Card Adapterについているピンヘッダを除去してハンダ付
 ## ROMへの書込み
 　まず、BASIC CZ-8CB01からIOCS(0000h～149Fh)を抜き出し、バイナリファイルとして保存します。
 
-　CZ-8FB01、CZ-8FB01も大丈夫だとは思いますが、検証していません。なお、X1turbo用BASICは使えません。
+　CZ-8FB01 V10、CZ-8FB01 V20も大丈夫だとは思いますが、検証していません。なお、X1turbo用BASICは使えません。
 
 　DumpList Editorを使ってWav又はtapファイルを読み込み、「マシン語入力に送る」を実行します。
 
