@@ -427,9 +427,9 @@ xはX1のキーボードから入力可能な32文字までの文字列です。
 ### S-OS SWORD
 　Oh!MZ '86/2月号に掲載されたS-OS SWORDをX1_SD対応とすることでOh!MZ誌及びOh!X誌に連載されたTHE SENTINELのプログラムがFDD、CMT無しでも利用できるようになります。
 
-　X1版SWORDは大石様のWEB THE SENTINEL http://www.retropc.net/ohishi/s-os/ からダウンロードできます。『X1/C/D/Cs/Ck/F/G/Twin (1986.2,1987.3,1989.2)』版をダウンロードしてください。
+　Oh!MZ誌掲載のダンプリストから入力したテープ専用版SWORDが必要ですが、大石様のWEB THE SENTINEL http://www.retropc.net/ohishi/s-os/ からsword.binがダウンロードできます。『X1/C/D/Cs/Ck/F/G/Twin (1986.2,1987.3,1989.2)』版をダウンロードしてください。
 
-　解凍するとbinariesフォルダにsword.bin(6,101Byte)があります。
+　ダウンロードしたX1Sword-1989-02.zipを解凍するとbinariesフォルダにsword.bin(6,101Byte)があります。
 
 　まず、sword.binに以下のパッチを当て、テープ専用版に修正します。
 
