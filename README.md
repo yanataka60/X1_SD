@@ -622,3 +622,8 @@ xはX1のキーボードから入力可能な32文字までの文字列です。
 　AE-microSD-LLCNV
 
 　　https://github.com/kuninet/PC-8001-SD-8kRAM
+
+
+## 追記
+2023.10.26　SD対応アプリケーションにStellarコンパイラを追加。
+
