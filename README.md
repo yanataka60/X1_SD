@@ -605,7 +605,7 @@ xはX1のキーボードから入力可能な32文字までの文字列です。
 
 　[0010] 20 20 1B 6C 00 00 E0 67 20 20 20 20 20 20 00 00
 
-![STELLAR](https://github.com/yanataka60/X1_SD/blob/main/JPEG/STELLAR.jpg)
+![STELLAR](https://github.com/yanataka60/X1_SD/blob/main/JPEG/stellar.jpg)
 
 　出来上がったら「Stellar_SD.x1t」という名前で保存し、SDカードにコピーします。
 
