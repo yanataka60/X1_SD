@@ -1,0 +1,298 @@
+			  Z80 ASSEMBLER - ZASM VER 1.6
+                      	;07CH PORTA 送信データ(下位4ビット)
+                      	;07DH PORTB 受信データ(8ビット)
+                      	;
+                      	;07EH PORTC Bit
+                      	;7 IN  CHK
+                      	;6 IN
+                      	;5 IN
+                      	;4 IN 
+                      	;3 OUT
+                      	;2 OUT FLG
+                      	;1 OUT
+                      	;0 OUT
+                      	;
+                      	;07FH コントロールレジスタ
+                      	
+                      	
+  0000                	        ORG		0000H
+                      	
+  0000  31FF8F        			LD		SP,8FFFH               ;スタックポインタ設定
+                      			
+  0003                	TENSO:                                     ;SDからの読み込みプログラムをメモリ後半に転送
+  0003  211100        			LD		HL,MARK1
+  0006  110080        			LD		DE,MARK2                   ;8000hへ転送
+  0009  01A301        			LD		BC,MARK3-MARK2-1
+  000C  EDB0          			LDIR
+  000E  C30080        			JP		MARK2
+                      	
+  0011                	MARK1:
+  8000                			ORG		8000H
+                      	
+  8000                	MARK2:
+                      	;**** 8255初期化 ****
+                      	;PORTC下位BITをOUTPUT、上位BITをINPUT、PORTBをINPUT、PORTAをOUTPUT
+  8000  3E8A          	INIT:	LD		A,8AH
+  8002  017F00        			LD		BC,007FH
+  8005  ED79          			OUT		(C),A
+                      	;出力BITをリセット
+  8007  3E00          	INIT2:	LD		A,00H      ;PORTA <- 0
+  8009  017C00        			LD		BC,007CH
+  800C  ED79          			OUT		(C),A
+  800E  017E00        			LD		BC,007EH
+  8011  ED79          			OUT		(C),A   ;PORTC <- 0
+                      	
+  8013                	START:
+  8013  F3            			DI
+  8014  CD7181        			CALL	TCLR       ;テキスト画面消去
+  8017  3E81          			LD		A,81H      ;BOOTコマンド81H
+  8019  CD1F81        			CALL	STCD       ;コマンドコード送信
+  801C  A7            			AND		A          ;00以外ならERROR
+  801D  C25D80        			JP		NZ,ERR
+                      	
+  8020  218480        			LD		HL,LNAME   ;ファイルネーム送信「X1_SD_BOOT.X1T」
+  8023  CD2681        			CALL	STFS
+  8026  A7            			AND		A          ;00以外ならERROR
+  8027  C25D80        			JP		NZ,ERR
+                      	
+  802A  3E06          			LD		A,06H
+  802C  32A481        			LD		(CURX),A
+  802F  3E0C          			LD		A,0CH
+  8031  32A581        			LD		(CURY),A
+  8034  217A80        			LD		HL,MSG1    ;LOADING X1_SD_BOOT.X1T表示
+  8037  CD3981        			CALL	STRPR
+                      	
+  803A  CDAE80        			CALL	HDRCV      ;ヘッダ情報受信
+                      	
+  803D  3EE4          			LD		A,0E4H     ;サブCPU割込み停止
+  803F  CD8481        			CALL	COMOUT
+  8042  AF            			XOR		A
+  8043  CD8D81        			CALL	TRANS49
+                      	
+                      	;データ受信
+  8046  2ABC81        			LD		HL,(EXEAD)
+  8049  E5            			PUSH	HL
+  804A  2ABA81        			LD		HL,(SADRS)
+  804D  ED5BB881      			LD		DE,(FSIZE)
+  8051  CDC080        	DBRLOP:	CALL	RCVBYTE
+  8054  77            			LD		(HL),A
+  8055  1B            			DEC		DE
+  8056  7A            			LD		A,D
+  8057  B3            			OR		E
+  8058  23            			INC		HL
+  8059  20F6          			JR		NZ,DBRLOP   ;DE=0までLOOP
+  805B                	DBRLOP1:
+  805B  E1            			POP		HL
+  805C  E9            			JP		(HL)        ;実行番地へジャンプ
+                      	
+  805D  21A480        	ERR:	LD		HL,MSG2    ;NOT FOUND
+  8060  117A80        			LD		DE,MSG1
+  8063  010A00        			LD		BC,10
+  8066  EDB0          			LDIR
+  8068  3E06          	ERR2:	LD		A,06H
+  806A  32A481        			LD		(CURX),A
+  806D  3E0C          			LD		A,0CH
+  806F  32A581        			LD		(CURY),A
+  8072  217A80        			LD		HL,MSG1
+  8075  CD3981        			CALL	STRPR
+  8078  18EE          			JR		ERR2
+                      	
+  807A  4C4F4144494E47	MSG1:	DB		'LOADING   '
+                      	
+  8084  58315F53445F42	LNAME:	DB		'X1_SD_BOOT.X1T',00H
+  8093  00000000000000			DB		00H,00H,00H,00H,00H,00H,00H,00H,00H,00H,00H,00H,00H,00H,00H,00H,00H
+                      	
+  80A4  4E4F5420464F55	MSG2:	DB		'NOT FOUND '
+                      	
+                      	;ヘッダ受信
+  80AE  21A681        	HDRCV:	LD		HL,IPLFCB
+  80B1  0620          			LD		B,20H
+  80B3  CDC080        	HDRC1:	CALL	RCVBYTE    ;IPL用FCB受信
+  80B6  77            			LD		(HL),A
+  80B7  23            			INC		HL
+  80B8  10F9          			DJNZ	HDRC1
+  80BA  21B781        			LD		HL,FNAME+16
+  80BD  AF            			XOR		A
+  80BE  77            			LD		(HL),A
+  80BF  C9            			RET
+                      	
+                      	;**** 1BYTE受信 ****
+                      	;受信DATAをAレジスタにセットしてリターン
+  80C0                	RCVBYTE:
+  80C0  C5            			PUSH	BC
+  80C1  CDDE80        			CALL	F1CHK      ;PORTC BIT7が1になるまでLOOP
+  80C4  017D00        			LD		BC,007DH
+  80C7  ED78          			IN		A,(C)   ;PORTB -> A
+  80C9  F5            			PUSH 	AF
+  80CA  3E05          			LD		A,05H
+  80CC  017F00        			LD		BC,007FH
+  80CF  ED79          			OUT		(C),A    ;PORTC BIT2 <- 1
+  80D1  CDE880        			CALL	F2CHK      ;PORTC BIT7が0になるまでLOOP
+  80D4  3E04          			LD		A,04H
+  80D6  017F00        			LD		BC,007FH
+  80D9  ED79          			OUT		(C),A    ;PORTC BIT2 <- 0
+  80DB  F1            			POP 	AF
+  80DC  C1            			POP		BC
+  80DD  C9            			RET
+                      	
+                      	;**** BUSYをCHECK(1) ****
+                      	; 7EH BIT7が1になるまでLOP
+  80DE  017E00        	F1CHK:	LD		BC,007EH
+  80E1  ED78          			IN		A,(C)
+  80E3  E680          			AND		80H        ;PORTC BIT7 = 1?
+  80E5  28F7          			JR		Z,F1CHK
+  80E7  C9            			RET
+                      	
+                      	;**** BUSYをCHECK(0) ****
+                      	; 7EH BIT7が0になるまでLOOP
+  80E8  017E00        	F2CHK:	LD		BC,007EH
+  80EB  ED78          			IN		A,(C)
+  80ED  E680          			AND		80H        ;PORTC BIT7 = 0?
+  80EF  20F7          			JR		NZ,F2CHK
+  80F1  C9            			RET
+                      	
+                      	;**** 1BYTE送信 ****
+                      	;Aレジスタの内容をPORTA下位4BITに4BITずつ送信
+  80F2                	SNDBYTE:
+  80F2  C5            			PUSH	BC
+  80F3  F5            			PUSH	AF
+  80F4  1F            			RRA
+  80F5  1F            			RRA
+  80F6  1F            			RRA
+  80F7  1F            			RRA
+  80F8  E60F          			AND		0FH
+  80FA  CD0581        			CALL	SND4BIT
+  80FD  F1            			POP		AF
+  80FE  E60F          			AND		0FH
+  8100  CD0581        			CALL	SND4BIT
+  8103  C1            			POP		BC
+  8104  C9            			RET
+                      	
+                      	;**** 4BIT送信 ****
+                      	;Aレジスタ下位4ビットを送信する
+  8105                	SND4BIT:
+  8105  017C00        			LD		BC,007CH
+  8108  ED79          			OUT		(C),A
+  810A  3E05          			LD		A,05H
+  810C  017F00        			LD		BC,007FH
+  810F  ED79          			OUT		(C),A    ;PORTC BIT2 <- 1
+  8111  CDDE80        			CALL	F1CHK      ;PORTC BIT7が1になるまでLOOP
+  8114  3E04          			LD		A,04H
+  8116  017F00        			LD		BC,007FH
+  8119  ED79          			OUT		(C),A    ;PORTC BIT2 <- 0
+  811B  CDE880        			CALL	F2CHK
+  811E  C9            			RET
+                      	
+                      	;**** コマンド送信 (IN:A コマンドコード)****
+  811F  CDF280        	STCD:	CALL	SNDBYTE    ;Aレジスタのコマンドコードを送信
+  8122  CDC080        			CALL	RCVBYTE    ;状態取得(00H=OK)
+  8125  C9            			RET
+                      	
+                      	;**** ファイルネーム送信(IN:HL ファイルネームの先頭) ******
+  8126  0620          	STFS:	LD		B,20H
+  8128  7E            	STFS1:	LD		A,(HL)     ;FNAME送信
+  8129  CDF280        			CALL	SNDBYTE
+  812C  23            			INC		HL
+  812D  05            			DEC		B
+  812E  20F8          			JR		NZ,STFS1
+  8130  3E0D          			LD		A,0DH
+  8132  CDF280        			CALL	SNDBYTE
+  8135  CDC080        			CALL	RCVBYTE    ;状態取得(00H=OK)
+  8138  C9            			RET
+                      	
+                      	;文字列を表示
+  8139  7E            	STRPR:	LD		A,(HL)
+  813A  FE00          			CP		00H
+  813C  C8            			RET		Z
+  813D  CD4381        			CALL	PRINT
+  8140  23            			INC		HL
+  8141  18F6          			JR		STRPR
+                      	
+                      	;Aレジスタの内容をASCIIコードとしてCURX,Yの位置に表示
+  8143  E5            	PRINT:	PUSH	HL
+  8144  F5            			PUSH	AF
+  8145  CD5681        			CALL	CALXY
+  8148  ED78          			IN		A,(C)
+  814A  F1            			POP		AF
+  814B  ED79          			OUT		(C),A
+  814D  3AA481        			LD		A,(CURX)
+  8150  3C            			INC		A
+  8151  32A481        			LD		(CURX),A
+  8154  E1            			POP		HL
+  8155  C9            			RET
+                      			
+                      	;CURX,YからV-RAMアドレスを算出
+  8156  D5            	CALXY:	PUSH	DE
+  8157  E5            			PUSH	HL
+  8158  21D82F        			LD		HL,3000H-28H
+  815B  3AA581        			LD		A,(CURY)
+  815E  3C            			INC		A
+  815F  47            			LD		B,A
+  8160  1600          			LD		D,00H
+  8162  1E28          			LD		E,28H
+  8164  19            	CALXY1:	ADD		HL,DE
+  8165  10FD          			DJNZ	CALXY1
+  8167  3AA481        			LD		A,(CURX)
+  816A  5F            			LD		E,A
+  816B  19            			ADD		HL,DE
+  816C  44            			LD		B,H
+  816D  4D            			LD		C,L
+  816E  E1            			POP		HL
+  816F  D1            			POP		DE
+  8170  C9            			RET
+                      	
+                      	;テキスト画面消去
+  8171                	TCLR:
+  8171  ED78          			IN		A,(C)
+  8173  010030        			LD		BC,3000H
+  8176  11E803        			LD		DE,03E8H
+  8179  3E20          	TCLR1:	LD		A,20H
+  817B  ED79          			OUT		(C),A
+  817D  03            			INC		BC
+  817E  1B            			DEC		DE
+  817F  7A            			LD		A,D
+  8180  B3            			OR		E
+  8181  20F6          			JR		NZ,TCLR1
+  8183  C9            			RET
+                      			
+                      	;サブCPUへコマンド送信
+  8184                	COMOUT:
+  8184  FB            			EI
+  8185  CD8D81        			CALL	TRANS49
+  8188  CD9A81        			CALL	IBFCK
+  818B  F3            			DI
+  818C  C9            			RET
+                      	
+                      	;サブCPUがデータを受け取れるまで待ち、送信要求コードを送る
+  818D                	TRANS49:
+  818D  C5            			PUSH	BC
+  818E  F5            			PUSH	AF
+  818F  CD9A81        			CALL	IBFCK
+  8192  F1            			POP		AF
+  8193  010019        			LD		BC,1900h
+  8196  ED79          			OUT		(C),A
+  8198  C1            			POP		BC
+  8199  C9            			RET
+                      	
+                      	;サブCPUのIBFをチェックし、待機
+  819A                	IBFCK:
+  819A  01011A        			LD		BC,1A01h
+  819D                	IBFCK1:
+  819D  ED78          			IN		A,(C)
+  819F  E640          			AND		40h
+  81A1  20FA          			JR		NZ,IBFCK1
+  81A3  C9            			RET
+                      	
+  81A4                	MARK3:
+                      	
+  81A4                	CURX:	DS		1
+  81A5                	CURY:	DS		1
+  81A6                	IPLFCB:	DS		1
+  81A7                	FNAME:	DS		17
+  81B8                	FSIZE:	DS		2
+  81BA                	SADRS:	DS		2
+  81BC                	EXEAD:	DS		2
+  81BE                			DS		8
+                      	
+  81C6                			END
+

@@ -106,6 +106,15 @@ MicroSD Card Adapterについているピンヘッダを除去してハンダ付
 
 　「X1_SD_BOOT.X1T」をROMライター(TL866II Plus等)を使って27512に書き込んでください。
 
+### ROMにBOOT LOADERを書き込む方式の追加
+　前述のBASICからMONITORを抜き出してROMに書き込む方式は、自分が所有しているBASICから抜き出してROMに書き込むには問題が無いのですが、書き込み済みROMの配布はSHARPの著作権があるので出来ません。
+
+　そこで前述で作成した「X1_SD_BOOT.X1T」をSD-CARDから読み込み起動するプログラムをROMに書き込む方式を追加しました。
+
+　前述「ROMへの書込み」の手順により作成した「X1_SD_BOOT.X1T」をそのファイルネームのままでSD-CARDに保存してください。
+
+#### BOOT LOADERをROMに書き込む
+　BOOT_LOADERフォルダにある「BOOT_LOADER.X1T」をROMに書き込みます。
 
 ## Arduinoプログラム
 　Arduino IDEを使ってArduinoフォルダ内のX1_SD.inoを書き込みます。
@@ -629,3 +638,5 @@ xはX1のキーボードから入力可能な32文字までの文字列です。
 2023.10.26　SD対応アプリケーションにStellarコンパイラを追加。
 
 2023.10.26　BASIC CZ-8CB01からSD-CARDとのLOAD、SAVEをするための対応の説明中のヘッダに誤りがありました。
+
+2023.12.25　BASICから抽出したMONITORを修正して作成したX1_SD_BOOT.X1TをROMに書き込む方式以外にX1_SD_BOOT.X1TをSD-CARDから読み込むプログラムをROMに書き込む方式を追加した。
