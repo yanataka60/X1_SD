@@ -113,6 +113,8 @@ MicroSD Card Adapterについているピンヘッダを除去してハンダ付
 
 　前述「ROMへの書込み」の手順により作成した「X1_SD_BOOT.X1T」をそのファイルネームのままでSD-CARDに保存してください。
 
+　次の手順でROMに書き込んだ「BOOT_LOADER.X1T」によりSD-CARD上の「X1_SD_BOOT.X1T」が自動的に読み込まれます。
+
 #### BOOT LOADERをROMに書き込む
 　BOOT_LOADERフォルダにある「BOOT_LOADER.X1T」をROMに書き込みます。
 
@@ -648,3 +650,5 @@ xはX1のキーボードから入力可能な32文字までの文字列です。
 2023.12.25　BASICから抽出したMONITORを修正して作成したX1_SD_BOOT.X1TをROMに書き込む方式以外にX1_SD_BOOT.X1TをSD-CARDから読み込むプログラムをROMに書き込む方式を追加した。
 
 2024.1.15　SDカードは8GB以下が望ましいことを追記。
+
+2024.1.26　BOOT LOADERのバグを修正。
