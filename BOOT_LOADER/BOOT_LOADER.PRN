@@ -1,4 +1,6 @@
 			  Z80 ASSEMBLER - ZASM VER 1.6
+                      	;2024.1.26 ワークエリアも転送するよう修正
+                      	
                       	;07CH PORTA 送信データ(下位4ビット)
                       	;07DH PORTB 受信データ(8ビット)
                       	;
@@ -22,7 +24,7 @@
   0003                	TENSO:                                     ;SDからの読み込みプログラムをメモリ後半に転送
   0003  211100        			LD		HL,MARK1
   0006  110080        			LD		DE,MARK2                   ;8000hへ転送
-  0009  01A301        			LD		BC,MARK3-MARK2-1
+  0009  01C501        			LD		BC,MARK3-MARK2-1
   000C  EDB0          			LDIR
   000E  C30080        			JP		MARK2
                       	
@@ -283,16 +285,16 @@
   81A1  20FA          			JR		NZ,IBFCK1
   81A3  C9            			RET
                       	
-  81A4                	MARK3:
+  81A4  00            	CURX:	DB		0
+  81A5  00            	CURY:	DB		0
+  81A6  00            	IPLFCB:	DB		0
+  81A7  00000000000000	FNAME:	DB		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+  81B8  0000          	FSIZE:	DB		0,0
+  81BA  0000          	SADRS:	DB		0,0
+  81BC  0000          	EXEAD:	DB		0,0
+  81BE  00000000000000			DB		0,0,0,0,0,0,0,0
                       	
-  81A4                	CURX:	DS		1
-  81A5                	CURY:	DS		1
-  81A6                	IPLFCB:	DS		1
-  81A7                	FNAME:	DS		17
-  81B8                	FSIZE:	DS		2
-  81BA                	SADRS:	DS		2
-  81BC                	EXEAD:	DS		2
-  81BE                			DS		8
+  81C6                	MARK3:
                       	
   81C6                			END
 

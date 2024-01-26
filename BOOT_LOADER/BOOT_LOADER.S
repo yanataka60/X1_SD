@@ -1,3 +1,5 @@
+;2024.1.26 ワークエリアも転送するよう修正
+
 ;07CH PORTA 送信データ(下位4ビット)
 ;07DH PORTB 受信データ(8ビット)
 ;
@@ -282,15 +284,15 @@ IBFCK1:
 		JR		NZ,IBFCK1
 		RET
 
-MARK3:
+CURX:	DB		0
+CURY:	DB		0
+IPLFCB:	DB		0
+FNAME:	DB		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+FSIZE:	DB		0,0
+SADRS:	DB		0,0
+EXEAD:	DB		0,0
+		DB		0,0,0,0,0,0,0,0
 
-CURX:	DS		1
-CURY:	DS		1
-IPLFCB:	DS		1
-FNAME:	DS		17
-FSIZE:	DS		2
-SADRS:	DS		2
-EXEAD:	DS		2
-		DS		8
+MARK3:
 
 		END
