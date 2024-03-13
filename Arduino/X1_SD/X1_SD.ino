@@ -1,3 +1,4 @@
+//2024. 3.13 sd-card再挿入時の初期化処理を追加
 //
 #include "SdFat.h"
 #include <SPI.h>
@@ -27,6 +28,19 @@ char name2[4];
 #define PA3PIN          (19)
 // ファイル名は、ロングファイルネーム形式対応
 boolean eflg;
+
+void sdinit(void){
+  // SD初期化
+  if( !SD.begin(CABLESELECTPIN,8) )
+  {
+////    Serial.println("Failed : SD.begin");
+    eflg = true;
+  } else {
+////    Serial.println("OK : SD.begin");
+    eflg = false;
+  }
+////    Serial.println("START");
+}
 
 void setup(){
 ////  Serial.begin(9600);
@@ -60,16 +74,7 @@ void setup(){
   digitalWrite(PB7PIN,LOW);
   digitalWrite(FLGPIN,LOW);
 
-  // SD初期化
-  if( !SD.begin(CABLESELECTPIN,8) )
-  {
-////    Serial.println("Failed : SD.begin");
-    eflg = true;
-  } else {
-////    Serial.println("OK : SD.begin");
-    eflg = false;
-  }
-////  Serial.println("START");
+  sdinit();
 }
 
 //4BIT受信
@@ -208,14 +213,17 @@ void f_load(void){
 //       } else {
 //状態コード送信(ERROR)
 //        snd1byte(0xF2);
+          sdinit();
 //      }  
      } else {
 //状態コード送信(ERROR)
       snd1byte(0xFF);
+      sdinit();
    }  
    } else {
 //状態コード送信(FILE NOT FIND ERROR)
     snd1byte(0xF1);
+    sdinit();
   }
 }
 
@@ -404,6 +412,7 @@ unsigned int n_len,e_len;
   } else {
 //状態コード送信(ERROR)
     snd1byte(0xF1);
+    sdinit();
 ////  Serial.println("Infomation Block Write ERROR");
   }
 }
@@ -438,6 +447,7 @@ void mon_wdata(void){
   } else {
 //状態コード送信(ERROR)
     snd1byte(0xF1);
+    sdinit();
 ////  Serial.println("Data Block Write ERROR");
   }
 }
@@ -473,11 +483,13 @@ void mon_lhead(void){
     } else {
 //状態コード送信(ERROR)
       snd1byte(0xFF);
+      sdinit();
 ////  Serial.println("Infomation Block Read Error");
     }  
   } else {
 //状態コード送信(FILE NOT FIND ERROR)
     snd1byte(0xF1);
+    sdinit();
 ////  Serial.println("Infomation Block Read Error");
   }
 }
@@ -513,6 +525,7 @@ void mon_ldata(void){
   } else {
 //状態コード送信(FILE NOT FIND ERROR)
     snd1byte(0xF1);
+    sdinit();
 ////  Serial.println("Data Block Read Error");
   }
 }
@@ -546,16 +559,8 @@ void loop()
 ////  Serial.println("FILE LIST START");
 //状態コード送信(OK)
         snd1byte(0x00);
-  // SD初期化
-  if( !SD.begin(CABLESELECTPIN,8) )
-  {
-////    Serial.println("Failed : SD.begin");
-    eflg = true;
-  } else {
-////    Serial.println("OK : SD.begin");
-    eflg = false;
-  }
 ////  Serial.println("START");
+        sdinit();
         dirlist();
         break;
       case 0x91:
@@ -593,5 +598,6 @@ void loop()
   } else {
 //状態コード送信(ERROR)
     snd1byte(0xF0);
+    sdinit();
   }
 }
