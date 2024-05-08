@@ -2,7 +2,7 @@
 
 ![X1_SD](https://github.com/yanataka60/X1_SD/blob/main/JPEG/TITLE.jpg)
 
-　X1、X1turboでSD-CARDからのアプリケーション起動とBASICなどのアプリケーションからSD-CARDへのロード、セーブを実現するものです。
+　X1、X1turbo、X1turboZでSD-CARDからのアプリケーション起動とBASICなどのアプリケーションからSD-CARDへのロード、セーブを実現するものです。
 
 　電源ONで起動するSD対応LauncherからはF又はLコマンドでSDからアプリケーションをLOAD実行ができます。
 
@@ -20,6 +20,10 @@
 |EDAS for X1|月刊I/O '84/6月号|
 |エディタ・アセンブラ|渡辺英行・沼倉　均共著「マシン語プログラミング入門」|
 |Stellarコンパイラ|渡辺英行、高橋秀樹共著「X1ハイテックファイル」|
+
+　X1turbo、X1turboZで利用するときは、RESOLUTIONスイッチを「STANDARD」にしてください。
+
+　X1_SDはX1用アプリケーションを対象としており、X1_SD LauncherもX1用BASICからMONITOR部分を切り出して利用しています。
 
 　なお、Arduino、ROMへ書き込むための機器が別途必要となります。
 
