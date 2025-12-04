@@ -1,4 +1,5 @@
 //2024. 3.13 sd-card再挿入時の初期化処理を追加
+//2025.12. 4 mon_ldata処理で不要なaddx1tが入っていたため削除
 //
 #include "SdFat.h"
 #include <SPI.h>
@@ -496,7 +497,8 @@ void mon_lhead(void){
 
 //MLDAT リード データ代替処理
 void mon_ldata(void){
-  addx1t(m_name);
+// 2025.12.4 addx1tが不要な処理であったため削除
+//  addx1t(m_name);
 //ファイルが存在しなければERROR
   if (SD.exists(m_name) == true){
     snd1byte(0x00);
